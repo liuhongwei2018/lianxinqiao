@@ -231,7 +231,12 @@ const ICON={
   const catalog=[["live","宿舍生活",[["lamp","公寓走廊照明维护"],["water","饮水设备日常巡检"]]],["rel","同学关系",[["quiet","宿舍安静时段倡议"],["activity","公寓交流活动安排"]]],["study","学业就业",[["reading","自习室开放时间咨询"],["career","就业讲座安排咨询"]]],["mood","心理支持",[["workshop","心理健康讲座安排咨询"],["group","团体活动时间咨询"]]],["logi","后勤管理",[["room","活动室公共桌椅维护"],["bike","自行车停放区域标识"]]],["idea","意见建议",[["books","建议设置共享书架"],["notice","建议增设活动公告栏"]]]];
   const phones=[["保安室","0371-65586110"],["心理健康教育中心","0371-65586361"],...[1,2,3,4,5,6].map(n=>[n+"号公寓","0371-6558635"+n])];
   const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const choose=(id)=>{for(const [,group,items] of catalog){const found=items.find(([k])=>k===id);if(found)return {group,label:found[1]};}return null;};
+  const selectionNames=new Map();
+  for(const [category,group,pastItems] of catalog){
+    selectionNames.set(category,{category,group});
+    for(const [scene,detail] of pastItems)selectionNames.set(scene,{category,group,detail});
+  }
+  const selectionFor=record=>record&&selectionNames.get(record.scene||record.category);
   const main=document.getElementById("view");
   const phoneLink=([label,number])=>'<a class="service-call" aria-label="拨打'+label+'" href="tel:+86'+number.slice(1).replace("-","")+'">'+number+'</a>';
   const clock=seconds=>new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(seconds*1000));
@@ -240,7 +245,7 @@ const ICON={
   const notesKey="lxq-receipt-notes-tab-v1";
   const maxNote=600;
   const receiptPattern=/^LXQ-[A-F0-9]{20}$/;
-  const valid=r=>r&&receiptPattern.test(r.code)&&choose(r.scene)&&Number.isInteger(r.building)&&r.building>=1&&r.building<=6&&Number.isInteger(r.created)&&r.created>0&&r.created<4102444800;
+  const valid=r=>r&&receiptPattern.test(r.code)&&selectionFor(r)&&Number.isInteger(r.building)&&r.building>=1&&r.building<=6&&Number.isInteger(r.created)&&r.created>0&&r.created<4102444800;
   function readStorage(kind,key,fallback){
     try{const raw=window[kind].getItem(key);return raw===null?fallback:JSON.parse(raw);}
     catch{return fallback;}
@@ -255,16 +260,19 @@ const ICON={
     Array.isArray(row)&&receiptPattern.test(row[0])&&typeof row[1]==="string"&&row[1].length<=maxNote
   ).slice(-40):[]);
   let pending=readStorage("sessionStorage",pendingKey,null);
-  function prepareSubmission(scene,building,note){
-    const reusable=pending&&pending.scene===scene&&pending.building===building&&/^[0-9a-f-]{36}$/.test(pending.key);
+  function prepareSubmission(category,building,note){
+    const reusable=selectionFor(pending)?.category===category&&pending.building===building&&/^[0-9a-f-]{36}$/.test(pending.key);
     const key=reusable?pending.key:crypto.randomUUID();
-    pending={key,scene,building,note};
+    pending={key,category,building,note};
     writeStorage("sessionStorage",pendingKey,pending);
-    return new URLSearchParams({key,scene,building:String(building)});
+    return new URLSearchParams({key,category,building:String(building)});
   }
   function remember(record,note,key){
-    const {code,scene,building,created}=record;
-    recent=[{code,scene,building,created},...recent.filter(r=>r.code!==code)].slice(0,40);
+    const {code,building,created}=record;
+    const selection=selectionFor(record);
+    const saved={code,category:selection.category,building,created};
+    if(selection.detail)saved.scene=record.scene;
+    recent=[saved,...recent.filter(r=>r.code!==code)].slice(0,40);
     writeStorage("localStorage",savedKey,recent);
     if(note){
       notes.delete(code);
@@ -278,9 +286,11 @@ const ICON={
     }
   }
   function restoreReceipt(parts){
-    const [,key,code,time]=parts;
+    const [,key,code,time,previousItem]=parts;
     if(pending&&pending.key===key){
-      const record={code,created:Number(time),scene:pending.scene,building:pending.building};
+      const record={code,created:Number(time),category:pending.category,scene:pending.scene,building:pending.building};
+      const historical=selectionNames.get(previousItem);
+      if(historical?.detail&&historical.category===pending.category)record.scene=previousItem;
       if(valid(record))remember(record,pending.note,key);
     }
     if(receiptPattern.test(code)&&!recent.some(row=>row.code===code)){
@@ -292,65 +302,56 @@ const ICON={
   }
   function home(){
     const link=(id,icon,name,desc)=>'<a class="card entry '+(id==="help"?"alert":"")+'" href="#'+id+'"><span class="ic">'+icon+'</span><h3>'+name+'</h3><p>'+desc+'</p></a>';
-    return '<section class="hero"><div><h1>连心桥<br><em>有事说出来，件件有回音</em></h1><p class="intro">学生社区事项登记、提交回执及校内联系电话。</p><div class="cta"><a class="btn btn-o" href="#submit">'+ICON.write+' 提交</a><a class="btn btn-g" href="#track">'+ICON.search+' 提交记录</a></div></div><div class="promise"><div>'+ICON.write+'<p style="margin:0"><b>事项选择</b><span>选择事项和公寓，填写具体情况</span></p></div><div>'+ICON.check+'<p style="margin:0"><b>提交回执</b><span>提交后取得编号，可核对登记内容</span></p></div><div>'+ICON.phone+'<p style="margin:0"><b>校内联系</b><span>保安室、心理健康教育中心和各公寓值班室</span></p></div></div></section><div class="grid g3 paths">'+link("submit",ICON.write,"我要反映","选择事项并提交登记。")+link("track",ICON.search,"提交记录","查看这台设备上保存的回执。")+link("help",ICON.phone,"紧急求助","查看校园安全、心理支持和公寓电话。")+'</div>';
+    return '<section class="hero"><div><h1>连心桥<br><em>有事说出来，件件有回音</em></h1><p class="intro">学生社区事项登记、提交回执及校内联系电话。</p><div class="cta"><a class="btn btn-o" href="#submit">'+ICON.write+' 提交</a><a class="btn btn-g" href="#track">'+ICON.search+' 提交记录</a></div></div><div class="promise"><div>'+ICON.write+'<p style="margin:0"><b>事项选择</b><span>选择类别和公寓，填写具体情况</span></p></div><div>'+ICON.check+'<p style="margin:0"><b>提交回执</b><span>提交后取得编号，可核对登记内容</span></p></div><div>'+ICON.phone+'<p style="margin:0"><b>校内联系</b><span>保安室、心理健康教育中心和各公寓值班室</span></p></div></div></section><div class="grid g3 paths">'+link("submit",ICON.write,"我要反映","选择事项并提交登记。")+link("track",ICON.search,"提交记录","查看这台设备上保存的回执。")+link("help",ICON.phone,"紧急求助","查看校园安全、心理支持和公寓电话。")+'</div>';
   }
   function support(){
     const cards=phones.slice(0,2).map((row,i)=>'<section class="card hot-card"><div class="panel-head"><i>'+ (i?ICON.people:ICON.phone)+'</i><h3>'+row[0]+'</h3></div><p class="help-line">'+(i?"校内心理支持与咨询":"校园安全及现场求助")+'</p>'+phoneLink(row)+'</section>').join("");
     return title("紧急求助")+'<div class="grid g2">'+cards+'</div><section class="card reach"><h3>公寓值班室</h3><div class="call-list">'+phones.slice(2).map(row=>'<div class="call-row"><span>'+row[0]+'</span>'+phoneLink(row)+'</div>').join("")+'</div></section>';
   }
-  function rules(){return title("平台规则")+'<div class="grid g2"><section class="card"><h3>事项登记</h3><p>选择事项和公寓，填写具体情况。提交后可凭回执编号核对登记信息。</p></section><section class="card"><h3>联系工作人员</h3><p>如需报修、咨询或紧急协助，请联系相关部门或公寓值班室。</p><a href="#help">查看校内电话</a></section></div>';}
+  function rules(){return title("平台规则")+'<div class="grid g2"><section class="card"><h3>事项登记</h3><p>选择类别和公寓，填写具体情况。提交后可凭回执编号核对登记信息。</p></section><section class="card"><h3>联系工作人员</h3><p>如需报修、咨询或紧急协助，请联系相关部门或公寓值班室。</p><a href="#help">查看校内电话</a></section></div>';}
   function form(){
     const chips=catalog.map(([id,group])=>'<label class="category-choice"><input type="radio" name="category" value="'+id+'" required><span>'+group+'</span></label>').join("");
     const buildings=[1,2,3,4,5,6].map(n=>'<option value="'+n+'">'+n+'号公寓</option>').join("");
     main.innerHTML=title("我要反映")+'<form class="card form-panel" id="entry">'+
       '<fieldset class="category-field"><legend>事项类别</legend><div class="category-options">'+chips+'</div></fieldset>'+
-      '<div class="grid g2"><div class="field"><label for="scene">具体事项</label><select id="scene" name="scene" required disabled><option value="">请先选择事项类别</option></select></div>'+
-      '<div class="field"><label for="building">所在公寓</label><select name="building" id="building" required><option value="">请选择公寓</option>'+buildings+'</select></div></div>'+
+      '<div class="field"><label for="building">所在公寓</label><select name="building" id="building" required><option value="">请选择公寓</option>'+buildings+'</select></div>'+
       '<div class="field description-field"><div class="description-label"><label for="details">具体情况<span class="required-mark">必填</span></label><span class="hint" id="detailCount">0 / '+maxNote+'</span></div>'+
       '<textarea id="details" rows="4" maxlength="'+maxNote+'" required autocomplete="off" aria-describedby="detailHint" placeholder="请写下具体情况或建议。"></textarea>'+
       '<span class="hint" id="detailHint">填写内容仅在当前标签页可见。请勿填写姓名、学号或联系方式。</span></div>'+
       '<p class="hint">如需工作人员办理，请联系<a href="#help">公寓值班室</a>。</p>'+
       '<div class="err" role="alert" id="feedback"></div><button class="btn btn-p" id="send" type="submit">提交</button></form>';
-    const f=document.getElementById("entry"),scene=f.elements.scene,building=f.elements.building;
+    const f=document.getElementById("entry"),building=f.elements.building;
     const details=document.getElementById("details"),count=document.getElementById("detailCount");
     const button=document.getElementById("send"),feedback=document.getElementById("feedback");
-    function fillScenes(group){
-      scene.innerHTML='<option value="">请选择具体事项</option>'+group[2].map(([id,label])=>'<option value="'+id+'">'+label+'</option>').join("");
-      scene.disabled=false;
-    }
     function validateNote(){
       count.textContent=details.value.length+" / "+maxNote;
       details.setCustomValidity(details.value.trim()?"":"请填写具体情况。");
     }
     if(pending&&typeof pending.note==="string"){
-      const group=catalog.find(row=>row[2].some(([id])=>id===pending.scene));
-      if(group&&Number.isInteger(pending.building)&&pending.building>=1&&pending.building<=6){
-        f.elements.category.value=group[0];fillScenes(group);scene.value=pending.scene;
+      const restored=selectionFor(pending);
+      if(restored&&Number.isInteger(pending.building)&&pending.building>=1&&pending.building<=6){
+        f.elements.category.value=restored.category;
         building.value=String(pending.building);details.value=pending.note.slice(0,maxNote);
       }
     }
     validateNote();
     details.addEventListener("input",validateNote);
-    f.addEventListener("change",ev=>{
-      if(ev.target.name==="category")fillScenes(catalog.find(row=>row[0]===ev.target.value));
-      feedback.textContent="";
-    });
     f.addEventListener("input",()=>{feedback.textContent="";});
     let busy=false;
     f.addEventListener("submit",async ev=>{
       ev.preventDefault();
       validateNote();
       if(busy||!f.reportValidity())return;
-      const item=scene.value,b=Number(building.value),note=details.value.trim();
-      const fields=prepareSubmission(item,b,note);
+      const category=f.elements.category.value,b=Number(building.value),note=details.value.trim();
+      const fields=prepareSubmission(category,b,note);
       const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),14000);
-      const controls=[f.querySelector("fieldset"),scene,building,button];
+      const controls=[f.querySelector("fieldset"),building,button];
       busy=true;for(const control of controls)control.disabled=true;
       details.readOnly=true;button.textContent="提交中…";feedback.textContent="";
       try{
         const reply=await fetch(service+"/api/receipts",{method:"POST",body:fields,credentials:"omit",cache:"no-store",referrerPolicy:"no-referrer",signal:abort.signal});
         const record=await reply.json();
-        if(!reply.ok||!valid(record)||record.scene!==item||record.building!==b)throw Error("receipt");
+        if(!reply.ok||!valid(record)||selectionFor(record).category!==category||record.building!==b)throw Error("receipt");
         remember(record,note,fields.get("key"));
         if(f.isConnected)location.hash="receipt/"+record.code;
       }catch{
@@ -374,13 +375,20 @@ const ICON={
       }
     });
   }
-  function history(){const rows=recent.map(r=>'<a class="item" href="#receipt/'+r.code+'"><b>'+esc(choose(r.scene).label)+'</b><div>'+r.building+'号公寓 · '+clock(r.created)+'</div><small>'+r.code+'</small></a>').join("");return title("提交记录")+'<p class="muted">本设备最近提交的事项</p>'+(rows?'<section class="list form-panel">'+rows+'</section>':'<section class="card empty"><h3>暂无提交记录</h3><a class="btn btn-p" href="#submit">去提交</a></section>');}
+  function history(){
+    const rows=recent.map(r=>{
+      const item=selectionFor(r);
+      return '<a class="item" href="#receipt/'+r.code+'"><b>'+esc(item.detail||item.group)+'</b><div>'+r.building+'号公寓 · '+clock(r.created)+'</div><small>'+r.code+'</small></a>';
+    }).join("");
+    return title("提交记录")+'<p class="muted">本设备最近提交的事项</p>'+(rows?'<section class="list form-panel">'+rows+'</section>':'<section class="card empty"><h3>暂无提交记录</h3><a class="btn btn-p" href="#submit">去提交</a></section>');
+  }
   function receipt(code){
     const r=recent.find(item=>item.code===code);
     if(!r)return title("提交回执")+'<section class="card"><p>本设备没有这条回执。</p><a href="#track">查看提交记录</a></section>';
-    const item=choose(r.scene);
+    const item=selectionFor(r);
+    const historicalDetail=item.detail?'<dt>具体事项</dt><dd>'+esc(item.detail)+'</dd>':"";
     const privateSection=notes.has(r.code)?'<section class="receipt-description"><h4>具体情况<span>仅当前标签页可见</span></h4><p id="localDescription"></p></section>':"";
-    return title("提交成功")+'<section class="card form-panel receipt-final"><div class="receipt-mark">'+ICON.check+'</div><h3>事项已登记</h3><p>回执编号</p><strong class="receipt-id">'+r.code+'</strong><dl class="kv"><dt>事项类别</dt><dd>'+esc(item.group)+'</dd><dt>具体事项</dt><dd>'+esc(item.label)+'</dd><dt>所在公寓</dt><dd>'+r.building+'号公寓</dd><dt>提交时间</dt><dd>'+clock(r.created)+'</dd></dl>'+privateSection+'<div class="cta"><a class="btn btn-p" href="#home">返回首页</a><a class="btn btn-g" href="'+service+'/r/'+r.code+'">查看登记回执</a></div></section>';
+    return title("提交成功")+'<section class="card form-panel receipt-final"><div class="receipt-mark">'+ICON.check+'</div><h3>事项已登记</h3><p>回执编号</p><strong class="receipt-id">'+r.code+'</strong><dl class="kv"><dt>事项类别</dt><dd>'+esc(item.group)+'</dd>'+historicalDetail+'<dt>所在公寓</dt><dd>'+r.building+'号公寓</dd><dt>提交时间</dt><dd>'+clock(r.created)+'</dd></dl>'+privateSection+'<div class="cta"><a class="btn btn-p" href="#home">返回首页</a><a class="btn btn-g" href="'+service+'/r/'+r.code+'">查看登记回执</a></div></section>';
   }
   function render(){
     const parts=location.hash.slice(1).split("/");
