@@ -2,8 +2,8 @@
 <html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="连心桥学生社区诉求服务平台，提供学生社区服务信息、办理入口和校内联系电话。">
-<meta name="referrer" content="no-referrer"><meta name="format-detection" content="telephone=no">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src https://lianxinqiao-receipts-b9c3.hongweiliu.chatgpt.site; form-action https://lianxinqiao-receipts-b9c3.hongweiliu.chatgpt.site; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin"><meta name="format-detection" content="telephone=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src https://lianxinqiao-receipts-b9c3.hongweiliu.chatgpt.site; form-action 'self' https://lianxinqiao-receipts-b9c3.hongweiliu.chatgpt.site; base-uri 'none'; object-src 'none'">
 <link rel="icon" type="image/png" href="logo.png"><title>连心桥 · 学生社区诉求服务平台</title>
 <style>
 :root{
@@ -206,6 +206,8 @@ nav.sub a{font-size:16px;padding:8px 1px;min-height:45px}.call-list{grid-templat
 }
 
 .category-field{border:0;padding:0;margin:0 0 20px;min-width:0}.category-field legend{font-weight:700;margin-bottom:10px}.category-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.category-choice{position:relative;cursor:pointer}.category-choice input{position:absolute;opacity:0;width:1px;height:1px}.category-choice span{display:block;text-align:center;border:1px solid var(--p-line);border-radius:9px;padding:10px 5px;background:white;font-weight:600}.category-choice input:checked+span{background:var(--p-soft);color:var(--p-dark);border:2px solid var(--p);padding:9px 4px}.category-choice input:focus-visible+span{outline:3px solid var(--o);outline-offset:2px}.form-panel select{font-size:16px}.receipt-mark{display:inline-flex;color:#22623a;background:#e6f4ec;border-radius:50%;padding:9px;margin-bottom:10px}.receipt-id{font:600 clamp(14px,2.6vw,20px)/1.5 ui-monospace,monospace;overflow-wrap:anywhere;color:var(--p-dark)}.receipt-final .kv{margin:22px 0}.receipt-final .cta{display:flex;gap:8px;flex-wrap:wrap}.inline-link{padding:0;border:0;color:var(--p-dark);background:none;font:inherit;text-decoration:underline;cursor:pointer}.err:empty{display:none}.err:not(:empty){margin:12px 0}@media(max-width:540px){.category-options{grid-template-columns:repeat(2,minmax(0,1fr))}.form-panel .grid{gap:4px}}
+
+.description-field{margin-top:5px}.description-label{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.description-label label{margin:0}.description-label .hint{font-variant-numeric:tabular-nums;white-space:nowrap}.required-mark,.receipt-description h4 span{font-size:12px;font-weight:400;color:var(--ink3);margin-left:8px}#details{display:block;width:100%;min-height:106px;resize:vertical;font-size:16px;line-height:1.6;padding:10px 12px}#details::placeholder{color:#817988}.receipt-description{background:var(--p-soft);border-radius:10px;padding:14px 16px;margin-bottom:20px}.receipt-description h4{margin:0 0 6px;font-size:16px}.receipt-description p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
 </style></head><body>
 <header class="top"><div class="wrap bar"><a class="brand" href="#home" aria-label="连心桥首页"><img src="logo.png" alt="郑州软件职业技术学院"><span class="sep" aria-hidden="true"></span><span class="name"><b>连心桥</b><span>学生社区诉求服务平台</span></span></a>
 </div>
@@ -234,54 +236,142 @@ const ICON={
   const phoneLink=([label,number])=>'<a class="service-call" aria-label="拨打'+label+'" href="tel:+86'+number.slice(1).replace("-","")+'">'+number+'</a>';
   const clock=seconds=>new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(seconds*1000));
   const title=name=>'<div class="page-title"><h2>'+name+'</h2></div>';
-  const savedKey="lxq-scenario-receipts-v1",pendingKey="lxq-scenario-pending-v1";
-  let recent=[],transient=null;
-  const valid=r=>r&&/^LXQ-[A-F0-9]{20}$/.test(r.code)&&choose(r.scene)&&Number.isInteger(r.building)&&r.building>=1&&r.building<=6&&Number.isInteger(r.created)&&r.created>0&&r.created<4102444800;
-  try{recent=JSON.parse(localStorage.getItem(savedKey)||"[]").filter(valid);}catch{}
-  function remember(record){recent=[record,...recent.filter(r=>r.code!==record.code)].slice(0,40);try{localStorage.setItem(savedKey,JSON.stringify(recent));}catch{}}
-  function requestKey(scene,building){
-    let old=transient;
-    try{old=JSON.parse(sessionStorage.getItem(pendingKey)||"null")||old;}catch{}
-    if(old&&old.scene===scene&&old.building===building&&/^[0-9a-f-]{36}$/.test(old.key))return old.key;
-    transient={scene,building,key:crypto.randomUUID()};try{sessionStorage.setItem(pendingKey,JSON.stringify(transient));}catch{}
-    return transient.key;
+  const savedKey="lxq-scenario-receipts-v1", pendingKey="lxq-scenario-pending-v1";
+  const notesKey="lxq-receipt-notes-tab-v1";
+  const maxNote=600;
+  const receiptPattern=/^LXQ-[A-F0-9]{20}$/;
+  const valid=r=>r&&receiptPattern.test(r.code)&&choose(r.scene)&&Number.isInteger(r.building)&&r.building>=1&&r.building<=6&&Number.isInteger(r.created)&&r.created>0&&r.created<4102444800;
+  function readStorage(kind,key,fallback){
+    try{const raw=window[kind].getItem(key);return raw===null?fallback:JSON.parse(raw);}
+    catch{return fallback;}
+  }
+  function writeStorage(kind,key,value){
+    try{if(value===null)window[kind].removeItem(key);else window[kind].setItem(key,JSON.stringify(value));}catch{}
+  }
+  const recentRows=readStorage("localStorage",savedKey,[]);
+  let recent=Array.isArray(recentRows)?recentRows.filter(valid).slice(0,40):[];
+  const noteRows=readStorage("sessionStorage",notesKey,[]);
+  const notes=new Map(Array.isArray(noteRows)?noteRows.filter(row=>
+    Array.isArray(row)&&receiptPattern.test(row[0])&&typeof row[1]==="string"&&row[1].length<=maxNote
+  ).slice(-40):[]);
+  let pending=readStorage("sessionStorage",pendingKey,null);
+  function prepareSubmission(scene,building,note){
+    const reusable=pending&&pending.scene===scene&&pending.building===building&&/^[0-9a-f-]{36}$/.test(pending.key);
+    const key=reusable?pending.key:crypto.randomUUID();
+    pending={key,scene,building,note};
+    writeStorage("sessionStorage",pendingKey,pending);
+    return new URLSearchParams({key,scene,building:String(building)});
+  }
+  function remember(record,note,key){
+    const {code,scene,building,created}=record;
+    recent=[{code,scene,building,created},...recent.filter(r=>r.code!==code)].slice(0,40);
+    writeStorage("localStorage",savedKey,recent);
+    if(note){
+      notes.delete(code);
+      notes.set(code,note);
+      if(notes.size>40)notes.delete(notes.keys().next().value);
+      writeStorage("sessionStorage",notesKey,[...notes]);
+    }
+    if(pending&&pending.key===key){
+      pending=null;
+      writeStorage("sessionStorage",pendingKey,null);
+    }
+  }
+  function restoreReceipt(parts){
+    const [,key,code,time]=parts;
+    if(pending&&pending.key===key){
+      const record={code,created:Number(time),scene:pending.scene,building:pending.building};
+      if(valid(record))remember(record,pending.note,key);
+    }
+    if(receiptPattern.test(code)&&!recent.some(row=>row.code===code)){
+      location.replace(service+"/r/"+code);
+      return false;
+    }
+    const target=receiptPattern.test(code)?"receipt/"+code:"track";
+    window.history.replaceState(null,"","#"+target);return true;
   }
   function home(){
     const link=(id,icon,name,desc)=>'<a class="card entry '+(id==="help"?"alert":"")+'" href="#'+id+'"><span class="ic">'+icon+'</span><h3>'+name+'</h3><p>'+desc+'</p></a>';
-    return '<section class="hero"><div><h1>连心桥<br><em>有事说出来，件件有回音</em></h1><p class="intro">学生社区事项登记、提交回执及校内联系电话。</p><div class="cta"><a class="btn btn-o" href="#submit">'+ICON.write+' 提交</a><a class="btn btn-g" href="#track">'+ICON.search+' 提交记录</a></div></div><div class="promise"><div>'+ICON.write+'<p style="margin:0"><b>事项选择</b><span>选择事项类别、具体事项和所在公寓</span></p></div><div>'+ICON.check+'<p style="margin:0"><b>提交回执</b><span>提交后取得编号，可核对登记内容</span></p></div><div>'+ICON.phone+'<p style="margin:0"><b>校内联系</b><span>保安室、心理健康教育中心和各公寓值班室</span></p></div></div></section><div class="grid g3 paths">'+link("submit",ICON.write,"我要反映","选择事项并提交登记。")+link("track",ICON.search,"提交记录","查看这台设备上保存的回执。")+link("help",ICON.phone,"紧急求助","查看校园安全、心理支持和公寓电话。")+'</div>';
+    return '<section class="hero"><div><h1>连心桥<br><em>有事说出来，件件有回音</em></h1><p class="intro">学生社区事项登记、提交回执及校内联系电话。</p><div class="cta"><a class="btn btn-o" href="#submit">'+ICON.write+' 提交</a><a class="btn btn-g" href="#track">'+ICON.search+' 提交记录</a></div></div><div class="promise"><div>'+ICON.write+'<p style="margin:0"><b>事项选择</b><span>选择事项和公寓，填写具体情况</span></p></div><div>'+ICON.check+'<p style="margin:0"><b>提交回执</b><span>提交后取得编号，可核对登记内容</span></p></div><div>'+ICON.phone+'<p style="margin:0"><b>校内联系</b><span>保安室、心理健康教育中心和各公寓值班室</span></p></div></div></section><div class="grid g3 paths">'+link("submit",ICON.write,"我要反映","选择事项并提交登记。")+link("track",ICON.search,"提交记录","查看这台设备上保存的回执。")+link("help",ICON.phone,"紧急求助","查看校园安全、心理支持和公寓电话。")+'</div>';
   }
   function support(){
     const cards=phones.slice(0,2).map((row,i)=>'<section class="card hot-card"><div class="panel-head"><i>'+ (i?ICON.people:ICON.phone)+'</i><h3>'+row[0]+'</h3></div><p class="help-line">'+(i?"校内心理支持与咨询":"校园安全及现场求助")+'</p>'+phoneLink(row)+'</section>').join("");
     return title("紧急求助")+'<div class="grid g2">'+cards+'</div><section class="card reach"><h3>公寓值班室</h3><div class="call-list">'+phones.slice(2).map(row=>'<div class="call-row"><span>'+row[0]+'</span>'+phoneLink(row)+'</div>').join("")+'</div></section>';
   }
-  function rules(){return title("平台规则")+'<div class="grid g2"><section class="card"><h3>事项登记</h3><p>从列表中选择事项和所在公寓，提交后凭回执编号核对登记内容。</p></section><section class="card"><h3>联系工作人员</h3><p>如需报修、咨询或紧急协助，请联系相关部门或公寓值班室。</p><a href="#help">查看校内电话</a></section></div>';}
+  function rules(){return title("平台规则")+'<div class="grid g2"><section class="card"><h3>事项登记</h3><p>选择事项和公寓，填写具体情况。提交后可凭回执编号核对登记信息。</p></section><section class="card"><h3>联系工作人员</h3><p>如需报修、咨询或紧急协助，请联系相关部门或公寓值班室。</p><a href="#help">查看校内电话</a></section></div>';}
   function form(){
     const chips=catalog.map(([id,group])=>'<label class="category-choice"><input type="radio" name="category" value="'+id+'" required><span>'+group+'</span></label>').join("");
-    main.innerHTML=title("我要反映")+'<form class="card form-panel" id="entry"><fieldset class="category-field"><legend>事项类别</legend><div class="category-options">'+chips+'</div></fieldset><div class="grid g2"><div class="field"><label for="scene">具体事项</label><select id="scene" name="scene" required disabled><option value="">请先选择事项类别</option></select></div><div class="field"><label for="building">所在公寓</label><select name="building" id="building" required><option value="">请选择公寓</option>'+[1,2,3,4,5,6].map(n=>'<option value="'+n+'">'+n+'号公寓</option>').join("")+'</select></div></div><p class="hint">此入口记录所选事项。如需工作人员办理，请联系<a href="#help">公寓值班室</a>。</p><div class="err" role="alert" id="feedback"></div><button class="btn btn-p" id="send" type="submit">提交</button></form>';
-    const f=document.getElementById("entry"),scene=f.elements.scene,button=document.getElementById("send"),feedback=document.getElementById("feedback");
-    f.addEventListener("change",ev=>{if(ev.target.name==="category"){const group=catalog.find(([id])=>id===ev.target.value);scene.innerHTML='<option value="">请选择具体事项</option>'+group[2].map(([id,label])=>'<option value="'+id+'">'+label+'</option>').join("");scene.disabled=false;}feedback.textContent="";});
+    const buildings=[1,2,3,4,5,6].map(n=>'<option value="'+n+'">'+n+'号公寓</option>').join("");
+    main.innerHTML=title("我要反映")+'<form class="card form-panel" id="entry">'+
+      '<fieldset class="category-field"><legend>事项类别</legend><div class="category-options">'+chips+'</div></fieldset>'+
+      '<div class="grid g2"><div class="field"><label for="scene">具体事项</label><select id="scene" name="scene" required disabled><option value="">请先选择事项类别</option></select></div>'+
+      '<div class="field"><label for="building">所在公寓</label><select name="building" id="building" required><option value="">请选择公寓</option>'+buildings+'</select></div></div>'+
+      '<div class="field description-field"><div class="description-label"><label for="details">具体情况<span class="required-mark">必填</span></label><span class="hint" id="detailCount">0 / '+maxNote+'</span></div>'+
+      '<textarea id="details" rows="4" maxlength="'+maxNote+'" required autocomplete="off" aria-describedby="detailHint" placeholder="请写下具体情况或建议。"></textarea>'+
+      '<span class="hint" id="detailHint">填写内容仅在当前标签页可见。请勿填写姓名、学号或联系方式。</span></div>'+
+      '<p class="hint">如需工作人员办理，请联系<a href="#help">公寓值班室</a>。</p>'+
+      '<div class="err" role="alert" id="feedback"></div><button class="btn btn-p" id="send" type="submit">提交</button></form>';
+    const f=document.getElementById("entry"),scene=f.elements.scene,building=f.elements.building;
+    const details=document.getElementById("details"),count=document.getElementById("detailCount");
+    const button=document.getElementById("send"),feedback=document.getElementById("feedback");
+    function fillScenes(group){
+      scene.innerHTML='<option value="">请选择具体事项</option>'+group[2].map(([id,label])=>'<option value="'+id+'">'+label+'</option>').join("");
+      scene.disabled=false;
+    }
+    function validateNote(){
+      count.textContent=details.value.length+" / "+maxNote;
+      details.setCustomValidity(details.value.trim()?"":"请填写具体情况。");
+    }
+    if(pending&&typeof pending.note==="string"){
+      const group=catalog.find(row=>row[2].some(([id])=>id===pending.scene));
+      if(group&&Number.isInteger(pending.building)&&pending.building>=1&&pending.building<=6){
+        f.elements.category.value=group[0];fillScenes(group);scene.value=pending.scene;
+        building.value=String(pending.building);details.value=pending.note.slice(0,maxNote);
+      }
+    }
+    validateNote();
+    details.addEventListener("input",validateNote);
+    f.addEventListener("change",ev=>{
+      if(ev.target.name==="category")fillScenes(catalog.find(row=>row[0]===ev.target.value));
+      feedback.textContent="";
+    });
+    f.addEventListener("input",()=>{feedback.textContent="";});
     let busy=false;
     f.addEventListener("submit",async ev=>{
       ev.preventDefault();
+      validateNote();
       if(busy||!f.reportValidity())return;
-      const item=scene.value,b=Number(f.elements.building.value),key=requestKey(item,b);
-      const fields=new URLSearchParams({key,scene:item,building:String(b)});
+      const item=scene.value,b=Number(building.value),note=details.value.trim();
+      const fields=prepareSubmission(item,b,note);
       const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),14000);
-      busy=true;button.disabled=true;button.textContent="提交中…";feedback.textContent="";
+      const controls=[f.querySelector("fieldset"),scene,building,button];
+      busy=true;for(const control of controls)control.disabled=true;
+      details.readOnly=true;button.textContent="提交中…";feedback.textContent="";
       try{
         const reply=await fetch(service+"/api/receipts",{method:"POST",body:fields,credentials:"omit",cache:"no-store",referrerPolicy:"no-referrer",signal:abort.signal});
         const record=await reply.json();
         if(!reply.ok||!valid(record)||record.scene!==item||record.building!==b)throw Error("receipt");
-        remember(record);transient=null;try{sessionStorage.removeItem(pendingKey);}catch{}
+        remember(record,note,fields.get("key"));
         if(f.isConnected)location.hash="receipt/"+record.code;
       }catch{
         if(f.isConnected){
           feedback.textContent="暂未取得回执，可再次提交或使用";
-          const alternate=document.createElement("button");alternate.type="button";alternate.className="inline-link";alternate.textContent="备用提交入口";
-          alternate.addEventListener("click",()=>{const transfer=document.createElement("form");transfer.method="POST";transfer.action=service+"/submit";for(const [name,value] of fields){const control=document.createElement("input");control.type="hidden";control.name=name;control.value=value;transfer.append(control);}document.body.append(transfer);transfer.submit();});
+          const alternate=document.createElement("button");
+          alternate.type="button";alternate.className="inline-link";alternate.textContent="备用提交入口";
+          alternate.addEventListener("click",()=>{
+            const transfer=document.createElement("form");transfer.method="POST";transfer.action=service+"/submit/return";
+            for(const [name,value] of fields){
+              const control=document.createElement("input");
+              control.type="hidden";control.name=name;control.value=value;transfer.append(control);
+            }
+            document.body.append(transfer);transfer.submit();
+          });
           feedback.append(alternate,"。");
         }
-      }finally{clearTimeout(timer);busy=false;button.disabled=false;button.textContent="提交";}
+      }finally{
+        clearTimeout(timer);busy=false;for(const control of controls)control.disabled=false;
+        details.readOnly=false;button.textContent="提交";
+      }
     });
   }
   function history(){const rows=recent.map(r=>'<a class="item" href="#receipt/'+r.code+'"><b>'+esc(choose(r.scene).label)+'</b><div>'+r.building+'号公寓 · '+clock(r.created)+'</div><small>'+r.code+'</small></a>').join("");return title("提交记录")+'<p class="muted">本设备最近提交的事项</p>'+(rows?'<section class="list form-panel">'+rows+'</section>':'<section class="card empty"><h3>暂无提交记录</h3><a class="btn btn-p" href="#submit">去提交</a></section>');}
@@ -289,15 +379,19 @@ const ICON={
     const r=recent.find(item=>item.code===code);
     if(!r)return title("提交回执")+'<section class="card"><p>本设备没有这条回执。</p><a href="#track">查看提交记录</a></section>';
     const item=choose(r.scene);
-    return title("提交成功")+'<section class="card form-panel receipt-final"><div class="receipt-mark">'+ICON.check+'</div><h3>事项已登记</h3><p>回执编号</p><strong class="receipt-id">'+r.code+'</strong><dl class="kv"><dt>事项类别</dt><dd>'+esc(item.group)+'</dd><dt>具体事项</dt><dd>'+esc(item.label)+'</dd><dt>所在公寓</dt><dd>'+r.building+'号公寓</dd><dt>提交时间</dt><dd>'+clock(r.created)+'</dd></dl><div class="cta"><a class="btn btn-p" href="#home">返回首页</a><a class="btn btn-g" href="'+service+'/r/'+r.code+'">查看回执</a></div></section>';
+    const privateSection=notes.has(r.code)?'<section class="receipt-description"><h4>具体情况<span>仅当前标签页可见</span></h4><p id="localDescription"></p></section>':"";
+    return title("提交成功")+'<section class="card form-panel receipt-final"><div class="receipt-mark">'+ICON.check+'</div><h3>事项已登记</h3><p>回执编号</p><strong class="receipt-id">'+r.code+'</strong><dl class="kv"><dt>事项类别</dt><dd>'+esc(item.group)+'</dd><dt>具体事项</dt><dd>'+esc(item.label)+'</dd><dt>所在公寓</dt><dd>'+r.building+'号公寓</dd><dt>提交时间</dt><dd>'+clock(r.created)+'</dd></dl>'+privateSection+'<div class="cta"><a class="btn btn-p" href="#home">返回首页</a><a class="btn btn-g" href="'+service+'/r/'+r.code+'">查看登记回执</a></div></section>';
   }
   function render(){
+    const parts=location.hash.slice(1).split("/");
+    if(parts[0]==="returned"&&!restoreReceipt(parts))return;
     const [p,code]=location.hash.slice(1).split("/");const route=["submit","receipt","track","help","rules"].includes(p)?p:"home";
     document.querySelectorAll("nav a[data-page]").forEach(a=>{const on=a.dataset.page===(route==="receipt"?"track":route);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
     if(route==="submit")form();else main.innerHTML=route==="home"?home():route==="track"?history():route==="receipt"?receipt(code):route==="help"?support():rules();
+    const localDescription=document.getElementById("localDescription");
+    if(route==="receipt"&&localDescription)localDescription.textContent=notes.get(code)||"";
     window.scrollTo(0,0);
   }
   window.addEventListener("hashchange",render);render();
 })();
-
 </script></body></html>
