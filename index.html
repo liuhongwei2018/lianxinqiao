@@ -3,7 +3,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="连心桥学生社区诉求服务平台，提供学生社区服务信息、办理入口和校内联系电话。">
 <meta name="referrer" content="no-referrer"><meta name="format-detection" content="telephone=no">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src https://lianxinqiao-receipts-b9c3.hongweiliu.chatgpt.site; form-action https://lianxinqiao-receipts-b9c3.hongweiliu.chatgpt.site; base-uri 'none'; object-src 'none'">
 <link rel="icon" type="image/png" href="logo.png"><title>连心桥 · 学生社区诉求服务平台</title>
 <style>
 :root{
@@ -204,10 +204,12 @@ nav.sub a{font-size:16px;padding:8px 1px;min-height:45px}.call-list{grid-templat
 .card{padding:17px}main{padding:17px 0 25px}.hero{padding:22px 20px;gap:19px}.hero h1{font-size:22px}.hero h1 em{font-size:18px}
 .item{display:flex;flex-wrap:wrap}.page-title{gap:8px}.hero .intro{font-size:15px}.inbox-item .txt{flex-basis:100%}
 }
+
+.category-field{border:0;padding:0;margin:0 0 20px;min-width:0}.category-field legend{font-weight:700;margin-bottom:10px}.category-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.category-choice{position:relative;cursor:pointer}.category-choice input{position:absolute;opacity:0;width:1px;height:1px}.category-choice span{display:block;text-align:center;border:1px solid var(--p-line);border-radius:9px;padding:10px 5px;background:white;font-weight:600}.category-choice input:checked+span{background:var(--p-soft);color:var(--p-dark);border:2px solid var(--p);padding:9px 4px}.category-choice input:focus-visible+span{outline:3px solid var(--o);outline-offset:2px}.form-panel select{font-size:16px}.receipt-mark{display:inline-flex;color:#22623a;background:#e6f4ec;border-radius:50%;padding:9px;margin-bottom:10px}.receipt-id{font:600 clamp(14px,2.6vw,20px)/1.5 ui-monospace,monospace;overflow-wrap:anywhere;color:var(--p-dark)}.receipt-final .kv{margin:22px 0}.receipt-final .cta{display:flex;gap:8px;flex-wrap:wrap}.inline-link{padding:0;border:0;color:var(--p-dark);background:none;font:inherit;text-decoration:underline;cursor:pointer}.err:empty{display:none}.err:not(:empty){margin:12px 0}@media(max-width:540px){.category-options{grid-template-columns:repeat(2,minmax(0,1fr))}.form-panel .grid{gap:4px}}
 </style></head><body>
 <header class="top"><div class="wrap bar"><a class="brand" href="#home" aria-label="连心桥首页"><img src="logo.png" alt="郑州软件职业技术学院"><span class="sep" aria-hidden="true"></span><span class="name"><b>连心桥</b><span>学生社区诉求服务平台</span></span></a>
-<nav class="top-links" aria-label="工作入口"><a data-page="home" href="#home">学生端</a><a data-page="todo" href="#todo">处置端</a><a data-page="dash" href="#dash">管理端</a></nav><div class="account-nav" id="accountNav"></div></div>
-<nav class="sub" aria-label="学生服务"><div class="wrap"><a data-page="home" href="#home">首页</a><a data-page="submit" href="#submit">我要反映</a><a data-page="track" href="#track">我的诉求</a><a data-page="help" href="#help">紧急求助</a><a data-page="rules" href="#rules">平台规则</a></div></nav></header>
+</div>
+<nav class="sub" aria-label="学生服务"><div class="wrap"><a data-page="home" href="#home">首页</a><a data-page="submit" href="#submit">我要反映</a><a data-page="track" href="#track">提交记录</a><a data-page="help" href="#help">紧急求助</a><a data-page="rules" href="#rules">平台规则</a></div></nav></header>
 <main><div class="wrap" id="view"><noscript>请开启浏览器的 JavaScript 查看完整页面。校内电话：保安室 0371-65586110，心理健康教育中心 0371-65586361。</noscript></div></main>
 <footer>郑州软件职业技术学院 · 连心桥学生社区诉求服务平台</footer>
 <script id="navigation">
@@ -221,67 +223,81 @@ const ICON={
   check:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>',
   star:'<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
 };
-(function startPortal(){
+(function boot(){
   "use strict";
-  const byId=id=>document.getElementById(id);
-  const escapeText=value=>String(value??"").replace(/[&<>"']/g,mark=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[mark]));
-  const categories={live:"宿舍生活",rel:"同学关系",study:"学业就业",mood:"心理支持",logi:"后勤管理",idea:"意见建议"};
-  const phones=[
-    ["保安室","0371-65586110"],["心理健康教育中心","0371-65586361"],
-    ["1号公寓","0371-65586351"],["2号公寓","0371-65586352"],["3号公寓","0371-65586353"],
-    ["4号公寓","0371-65586354"],["5号公寓","0371-65586355"],["6号公寓","0371-65586356"]
-  ];
-  const phoneLink=([label,number])=>`<a class="service-call" href="tel:+86${number.slice(1).replace("-","")}" aria-label="拨打${label} ${number}">${number}</a>`;
-  const pageTitle=(title,detail="")=>`<div class="page-title"><div><h2>${escapeText(title)}</h2>${detail?`<p>${escapeText(detail)}</p>`:""}</div></div>`;
-  const routes={home:"首页",submit:"我要反映",track:"我的诉求",help:"紧急求助",rules:"平台规则",todo:"处置工作台",dash:"管理工作台",login:"账号登录"};
-  const backend=window.lxqAccount||null;
-  const contactCards=()=>`<div class="grid g2"><section class="card hot-card"><div class="panel-head"><i>${ICON.phone}</i><h3>保安室</h3></div><p class="help-line">校园安全及现场求助</p>${phoneLink(phones[0])}</section>
-    <section class="card hot-card"><div class="panel-head"><i>${ICON.people}</i><h3>心理健康教育中心</h3></div><p class="help-line">校内心理支持与咨询</p>${phoneLink(phones[1])}</section></div>
-    <section class="card reach"><div class="panel-head"><h3>公寓值班室</h3></div><div class="call-list">${phones.slice(2).map(row=>`<div class="call-row"><span>${row[0]}</span>${phoneLink(row)}</div>`).join("")}</div></section>`;
+  const service="https://lianxinqiao-receipts-b9c3.hongweiliu.chatgpt.site";
+  const catalog=[["live","宿舍生活",[["lamp","公寓走廊照明维护"],["water","饮水设备日常巡检"]]],["rel","同学关系",[["quiet","宿舍安静时段倡议"],["activity","公寓交流活动安排"]]],["study","学业就业",[["reading","自习室开放时间咨询"],["career","就业讲座安排咨询"]]],["mood","心理支持",[["workshop","心理健康讲座安排咨询"],["group","团体活动时间咨询"]]],["logi","后勤管理",[["room","活动室公共桌椅维护"],["bike","自行车停放区域标识"]]],["idea","意见建议",[["books","建议设置共享书架"],["notice","建议增设活动公告栏"]]]];
+  const phones=[["保安室","0371-65586110"],["心理健康教育中心","0371-65586361"],...[1,2,3,4,5,6].map(n=>[n+"号公寓","0371-6558635"+n])];
+  const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const choose=(id)=>{for(const [,group,items] of catalog){const found=items.find(([k])=>k===id);if(found)return {group,label:found[1]};}return null;};
+  const main=document.getElementById("view");
+  const phoneLink=([label,number])=>'<a class="service-call" aria-label="拨打'+label+'" href="tel:+86'+number.slice(1).replace("-","")+'">'+number+'</a>';
+  const clock=seconds=>new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(seconds*1000));
+  const title=name=>'<div class="page-title"><h2>'+name+'</h2></div>';
+  const savedKey="lxq-scenario-receipts-v1",pendingKey="lxq-scenario-pending-v1";
+  let recent=[],transient=null;
+  const valid=r=>r&&/^LXQ-[A-F0-9]{20}$/.test(r.code)&&choose(r.scene)&&Number.isInteger(r.building)&&r.building>=1&&r.building<=6&&Number.isInteger(r.created)&&r.created>0&&r.created<4102444800;
+  try{recent=JSON.parse(localStorage.getItem(savedKey)||"[]").filter(valid);}catch{}
+  function remember(record){recent=[record,...recent.filter(r=>r.code!==record.code)].slice(0,40);try{localStorage.setItem(savedKey,JSON.stringify(recent));}catch{}}
+  function requestKey(scene,building){
+    let old=transient;
+    try{old=JSON.parse(sessionStorage.getItem(pendingKey)||"null")||old;}catch{}
+    if(old&&old.scene===scene&&old.building===building&&/^[0-9a-f-]{36}$/.test(old.key))return old.key;
+    transient={scene,building,key:crypto.randomUUID()};try{sessionStorage.setItem(pendingKey,JSON.stringify(transient));}catch{}
+    return transient.key;
+  }
   function home(){
-    return `<section class="hero"><div><div class="service-state">${backend?"账号服务":"校内服务 · 线上受理暂未开放"}</div>
-      <h1>连心桥<br><em>有事说出来，件件有回音</em></h1>
-      <p class="intro">学生社区诉求登记、办理进度查询及校内服务电话。</p>
-      <div class="cta"><a class="btn btn-o" href="#submit">${ICON.write} 提交</a><a class="btn btn-g" href="#track">${ICON.search} 我的诉求</a></div></div>
-      <div class="promise"><div>${ICON.write}<p style="margin:0"><b>分类反映</b><span>住宿生活、同学关系、学业就业与后勤服务</span></p></div>
-      <div>${ICON.clock}<p style="margin:0"><b>办理进度</b><span>按编号查看受理状态、处理记录和回复</span></p></div>
-      <div>${ICON.phone}<p style="margin:0"><b>校内联系</b><span>保安室、心理健康教育中心和各公寓值班室</span></p></div></div></section>
-      <div class="grid g3 paths"><a class="card entry" href="#submit"><span class="ic">${ICON.write}</span><h3>我要反映</h3><p>登记事项类别、所在楼栋及具体情况。</p></a>
-      <a class="card entry" href="#track"><span class="ic">${ICON.search}</span><h3>我的诉求</h3><p>查询本人事项的办理进度和处理结果。</p></a>
-      <a class="card entry alert" href="#help"><span class="ic">${ICON.phone}</span><h3>紧急求助</h3><p>查看校园安全、心理支持及公寓联系电话。</p></a></div>`;
+    const link=(id,icon,name,desc)=>'<a class="card entry '+(id==="help"?"alert":"")+'" href="#'+id+'"><span class="ic">'+icon+'</span><h3>'+name+'</h3><p>'+desc+'</p></a>';
+    return '<section class="hero"><div><h1>连心桥<br><em>有事说出来，件件有回音</em></h1><p class="intro">学生社区事项登记、提交回执及校内联系电话。</p><div class="cta"><a class="btn btn-o" href="#submit">'+ICON.write+' 提交</a><a class="btn btn-g" href="#track">'+ICON.search+' 提交记录</a></div></div><div class="promise"><div>'+ICON.write+'<p style="margin:0"><b>事项选择</b><span>选择事项类别、具体事项和所在公寓</span></p></div><div>'+ICON.check+'<p style="margin:0"><b>提交回执</b><span>提交后取得编号，可核对登记内容</span></p></div><div>'+ICON.phone+'<p style="margin:0"><b>校内联系</b><span>保安室、心理健康教育中心和各公寓值班室</span></p></div></div></section><div class="grid g3 paths">'+link("submit",ICON.write,"我要反映","选择事项并提交登记。")+link("track",ICON.search,"提交记录","查看这台设备上保存的回执。")+link("help",ICON.phone,"紧急求助","查看校园安全、心理支持和公寓电话。")+'</div>';
   }
-  function help(){
-    return `${pageTitle("紧急求助","如有人身危险或需要紧急救助，请立即向现场人员或当地紧急服务求助，不要等待线上回复。")}${contactCards()}`;
+  function support(){
+    const cards=phones.slice(0,2).map((row,i)=>'<section class="card hot-card"><div class="panel-head"><i>'+ (i?ICON.people:ICON.phone)+'</i><h3>'+row[0]+'</h3></div><p class="help-line">'+(i?"校内心理支持与咨询":"校园安全及现场求助")+'</p>'+phoneLink(row)+'</section>').join("");
+    return title("紧急求助")+'<div class="grid g2">'+cards+'</div><section class="card reach"><h3>公寓值班室</h3><div class="call-list">'+phones.slice(2).map(row=>'<div class="call-row"><span>'+row[0]+'</span>'+phoneLink(row)+'</div>').join("")+'</div></section>';
   }
-  function rules(){
-    return `${pageTitle("平台规则")}<div class="grid g2"><section class="card"><h3>受理范围</h3><p>学生社区住宿生活、同学关系、学业就业、心理支持、后勤事务与意见建议。</p><p class="muted">紧急事项请直接联系现场值班人员或当地紧急服务。</p><a href="#help">查询校内电话</a></section>
-      <section class="card"><h3>信息填写</h3><p>请写明与事项有关的地点、情况和需要的帮助。请勿填写身份证号、病历、他人联系方式等无关信息。</p><p class="muted">使用个人账号查看本人的编号及办理记录。</p></section></div>
-      <section class="card reach"><h3>办理流程</h3><div class="steps"><div class="on"><b>1 提交</b><span>登记事项，取得编号</span></div><div><b>2 受理</b><span>工作人员核对情况</span></div><div><b>3 跟进</b><span>补充情况，查看回复</span></div><div><b>4 办结</b><span>记录处理结果</span></div><div><b>5 评价</b><span>反馈办理情况</span></div></div></section>`;
-  }
-  function unavailable(route){
-    const person=route==="todo"||route==="dash";
-    return `${pageTitle(routes[route]||"账号服务")}<section class="card restrict"><p class="kicker">服务状态</p><h3>${person?"工作台暂未对外开放":"线上受理暂未开放"}</h3><p>如需反映问题，请联系所在公寓值班室或相关部门。此页面不会收取账号、密码或诉求内容。</p><a class="btn btn-p" href="#help">查看校内电话</a><a class="btn btn-g" href="#home">返回首页</a></section>`;
-  }
-  let revision=0;
-  async function render(){
-    const current=++revision;
-    const parts=location.hash.slice(1).split("/");
-    const route=Object.prototype.hasOwnProperty.call(routes,parts[0])?parts[0]:"home";
-    const main=byId("view");
-    document.querySelectorAll("header a[data-page]").forEach(link=>{
-      const active=link.dataset.page===route||(link.dataset.page==="home"&&link.closest(".top-links")&&!["todo","dash"].includes(route));
-      if(active)link.setAttribute("aria-current","page");else link.removeAttribute("aria-current");
+  function rules(){return title("平台规则")+'<div class="grid g2"><section class="card"><h3>事项登记</h3><p>从列表中选择事项和所在公寓，提交后凭回执编号核对登记内容。</p></section><section class="card"><h3>联系工作人员</h3><p>如需报修、咨询或紧急协助，请联系相关部门或公寓值班室。</p><a href="#help">查看校内电话</a></section></div>';}
+  function form(){
+    const chips=catalog.map(([id,group])=>'<label class="category-choice"><input type="radio" name="category" value="'+id+'" required><span>'+group+'</span></label>').join("");
+    main.innerHTML=title("我要反映")+'<form class="card form-panel" id="entry"><fieldset class="category-field"><legend>事项类别</legend><div class="category-options">'+chips+'</div></fieldset><div class="grid g2"><div class="field"><label for="scene">具体事项</label><select id="scene" name="scene" required disabled><option value="">请先选择事项类别</option></select></div><div class="field"><label for="building">所在公寓</label><select name="building" id="building" required><option value="">请选择公寓</option>'+[1,2,3,4,5,6].map(n=>'<option value="'+n+'">'+n+'号公寓</option>').join("")+'</select></div></div><p class="hint">此入口记录所选事项。如需工作人员办理，请联系<a href="#help">公寓值班室</a>。</p><div class="err" role="alert" id="feedback"></div><button class="btn btn-p" id="send" type="submit">提交</button></form>';
+    const f=document.getElementById("entry"),scene=f.elements.scene,button=document.getElementById("send"),feedback=document.getElementById("feedback");
+    f.addEventListener("change",ev=>{if(ev.target.name==="category"){const group=catalog.find(([id])=>id===ev.target.value);scene.innerHTML='<option value="">请选择具体事项</option>'+group[2].map(([id,label])=>'<option value="'+id+'">'+label+'</option>').join("");scene.disabled=false;}feedback.textContent="";});
+    let busy=false;
+    f.addEventListener("submit",async ev=>{
+      ev.preventDefault();
+      if(busy||!f.reportValidity())return;
+      const item=scene.value,b=Number(f.elements.building.value),key=requestKey(item,b);
+      const fields=new URLSearchParams({key,scene:item,building:String(b)});
+      const abort=new AbortController(),timer=setTimeout(()=>abort.abort(),14000);
+      busy=true;button.disabled=true;button.textContent="提交中…";feedback.textContent="";
+      try{
+        const reply=await fetch(service+"/api/receipts",{method:"POST",body:fields,credentials:"omit",cache:"no-store",referrerPolicy:"no-referrer",signal:abort.signal});
+        const record=await reply.json();
+        if(!reply.ok||!valid(record)||record.scene!==item||record.building!==b)throw Error("receipt");
+        remember(record);transient=null;try{sessionStorage.removeItem(pendingKey);}catch{}
+        if(f.isConnected)location.hash="receipt/"+record.code;
+      }catch{
+        if(f.isConnected){
+          feedback.textContent="暂未取得回执，可再次提交或使用";
+          const alternate=document.createElement("button");alternate.type="button";alternate.className="inline-link";alternate.textContent="备用提交入口";
+          alternate.addEventListener("click",()=>{const transfer=document.createElement("form");transfer.method="POST";transfer.action=service+"/submit";for(const [name,value] of fields){const control=document.createElement("input");control.type="hidden";control.name=name;control.value=value;transfer.append(control);}document.body.append(transfer);transfer.submit();});
+          feedback.append(alternate,"。");
+        }
+      }finally{clearTimeout(timer);busy=false;button.disabled=false;button.textContent="提交";}
     });
-    const user=backend?backend.current():null;
-    byId("accountNav").innerHTML=user?`<button type="button" id="signOut">退出登录</button>`:"";
-    if(user)byId("signOut").addEventListener("click",async()=>{await backend.logout();if(location.hash==="#home")render();else location.hash="home";});
-    if(route==="home")main.innerHTML=home();
-    else if(route==="help")main.innerHTML=help();
-    else if(route==="rules")main.innerHTML=rules();
-    else if(!backend)main.innerHTML=unavailable(route);
-    else await backend.draw(route,parts[1]||"",{main,escapeText,pageTitle,categories,render,alive:()=>revision===current});
-    if(revision===current)window.scrollTo(0,0);
+  }
+  function history(){const rows=recent.map(r=>'<a class="item" href="#receipt/'+r.code+'"><b>'+esc(choose(r.scene).label)+'</b><div>'+r.building+'号公寓 · '+clock(r.created)+'</div><small>'+r.code+'</small></a>').join("");return title("提交记录")+'<p class="muted">本设备最近提交的事项</p>'+(rows?'<section class="list form-panel">'+rows+'</section>':'<section class="card empty"><h3>暂无提交记录</h3><a class="btn btn-p" href="#submit">去提交</a></section>');}
+  function receipt(code){
+    const r=recent.find(item=>item.code===code);
+    if(!r)return title("提交回执")+'<section class="card"><p>本设备没有这条回执。</p><a href="#track">查看提交记录</a></section>';
+    const item=choose(r.scene);
+    return title("提交成功")+'<section class="card form-panel receipt-final"><div class="receipt-mark">'+ICON.check+'</div><h3>事项已登记</h3><p>回执编号</p><strong class="receipt-id">'+r.code+'</strong><dl class="kv"><dt>事项类别</dt><dd>'+esc(item.group)+'</dd><dt>具体事项</dt><dd>'+esc(item.label)+'</dd><dt>所在公寓</dt><dd>'+r.building+'号公寓</dd><dt>提交时间</dt><dd>'+clock(r.created)+'</dd></dl><div class="cta"><a class="btn btn-p" href="#home">返回首页</a><a class="btn btn-g" href="'+service+'/r/'+r.code+'">查看回执</a></div></section>';
+  }
+  function render(){
+    const [p,code]=location.hash.slice(1).split("/");const route=["submit","receipt","track","help","rules"].includes(p)?p:"home";
+    document.querySelectorAll("nav a[data-page]").forEach(a=>{const on=a.dataset.page===(route==="receipt"?"track":route);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+    if(route==="submit")form();else main.innerHTML=route==="home"?home():route==="track"?history():route==="receipt"?receipt(code):route==="help"?support():rules();
+    window.scrollTo(0,0);
   }
   window.addEventListener("hashchange",render);render();
 })();
+
 </script></body></html>
