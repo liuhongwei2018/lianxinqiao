@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="连心桥学生社区诉求服务平台 · 公开演示。仅使用预设案例体验学生、处置和管理流程，不受理真实诉求。">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<link rel="icon" href="logo.png" type="image/png">
+<title>连心桥 · 学生社区诉求服务平台（演示版）</title>
+<style>
+:root{
+  --p:#921C95; --p-dark:#6E1471; --p-deep:#1C1632; --p-soft:#F5F4FE; --p-line:#E4DEF3; --p-tint:#F1E4F2;
+  --o:#FFA022; --o-dark:#B86A00; --o-soft:#FFF3E0;
+  --ink:#1F1B2D; --ink2:#4A4560; --ink3:#6E6985;
+  --red:#C62828; --red-soft:#FDECEC; --amber:#9A5B00; --amber-soft:#FFF4DC; --green:#2E7D4F; --green-soft:#E6F4EC; --blue:#2457A6; --blue-soft:#E8F0FB;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--p-soft);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC","Hiragino Sans GB",system-ui,sans-serif;font-size:15px;line-height:1.6}
+a{color:var(--p)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* header */
+header.top{background:var(--p);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(60,10,62,.18)}
+.top .bar{display:flex;align-items:center;gap:18px;min-height:68px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+.brand{display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff}
+.brand img{height:42px;width:auto;display:block}
+.brand .sep{width:1px;height:34px;background:rgba(255,255,255,.35)}
+.brand .name{display:flex;flex-direction:column;line-height:1.2}
+.brand .name b{font-size:21px;letter-spacing:3px;font-family:"Songti SC","STSong","Noto Serif SC",serif}
+.brand .name span{font-size:12px;opacity:.85;letter-spacing:1px}
+.roles{margin-left:auto;display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:4px}
+.roles button{border:0;background:transparent;color:#fff;padding:7px 16px;border-radius:999px;cursor:pointer;font-size:14px;min-height:36px}
+.roles button.on{background:#fff;color:var(--p);font-weight:700}
+nav.sub{background:var(--p-dark)}
+nav.sub .wrap{display:flex;gap:4px;overflow-x:auto}
+nav.sub a{color:#F3DDF4;text-decoration:none;padding:11px 16px;font-size:14px;white-space:nowrap;border-bottom:3px solid transparent}
+nav.sub a.on{color:#fff;border-bottom-color:var(--o);font-weight:700}
+.notice{background:var(--o-soft);color:var(--o-dark);font-size:14px;border-radius:12px;padding:12px 16px;margin-bottom:18px}
+.roles[hidden]{display:none}
+
+main{padding:28px 0 60px}
+h1,h2,h3{margin:0;line-height:1.3}
+.page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.page-title h2{font-size:24px}
+.page-title p{margin:4px 0 0;color:var(--ink3)}
+.card{background:#fff;border:1px solid var(--p-line);border-radius:var(--r);padding:22px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:860px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}.roles{margin-left:0}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:10px;padding:10px 18px;min-height:44px;cursor:pointer;font-weight:600;text-decoration:none;font-size:15px}
+.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--p-dark)}
+.btn-o{background:var(--o);color:#3E2600}.btn-o:hover{background:#F08F00}
+.btn-g{background:#fff;color:var(--p);border-color:var(--p-line)}.btn-g:hover{border-color:var(--p)}
+.btn-sm{min-height:36px;padding:6px 12px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* hero */
+.hero{background:var(--p-deep);color:#fff;border-radius:20px;padding:44px 40px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px;align-items:center;overflow:hidden;position:relative}
+.hero:before{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;border:2px solid rgba(255,160,34,.25)}
+.hero h1{font-size:40px;letter-spacing:4px;font-family:"Songti SC","STSong","Noto Serif SC",serif}
+.hero h1 em{font-style:normal;color:var(--o)}
+.hero p{color:#D9D3EA;font-size:16px;margin:14px 0 26px;max-width:520px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.promise{display:grid;gap:12px;position:relative}
+.promise div{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.promise b{display:block;color:#fff}
+.promise span{color:#CFC8E2;font-size:13px}
+.promise svg{flex-shrink:0;color:var(--o);margin-top:3px}
+@media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr);padding:30px 22px}.hero h1{font-size:30px}.hero h1 em{font-size:23px;letter-spacing:2px}}
+
+.entry{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);transition:border-color .15s}
+.entry:hover{border-color:var(--p)}
+.entry .ic{width:46px;height:46px;border-radius:12px;background:var(--p-tint);color:var(--p);display:flex;align-items:center;justify-content:center}
+.entry.alert .ic{background:var(--red-soft);color:var(--red)}
+.entry h3{font-size:18px}
+.entry p{margin:0;color:var(--ink3);font-size:14px}
+
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;counter-reset:s}
+.steps div{padding:14px 12px;border-top:3px solid var(--p-line);position:relative}
+.steps div.on{border-top-color:var(--p)}
+.steps b{display:block;font-size:15px}
+.steps span{font-size:13px;color:var(--ink3)}
+@media (max-width:860px){.steps{grid-template-columns:minmax(0,1fr)}}
+
+/* form */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label{font-weight:600;font-size:14px}
+.field .hint{font-size:13px;color:var(--ink3)}
+input[type=text],input[type=tel],select,textarea{border:1px solid #CFC8E2;border-radius:10px;padding:10px 12px;background:#fff;min-height:44px;width:100%}
+textarea{min-height:130px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid rgba(146,28,149,.35);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid #CFC8E2;background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer;min-height:40px;font-size:14px}
+.chip.on{border-color:var(--p);background:var(--p);color:#fff}
+.switch{display:flex;gap:10px;align-items:center;cursor:pointer}
+.switch input{width:20px;height:20px;accent-color:var(--p)}
+.note{background:var(--p-tint);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--ink2)}
+.note.warn{background:var(--red-soft);color:#7A1A1A}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.lv-urgent{background:var(--red-soft);color:var(--red)}
+.lv-key{background:var(--amber-soft);color:var(--amber)}
+.lv-normal{background:var(--blue-soft);color:var(--blue)}
+.st-wait{background:#EEE;color:#555}
+.st-doing{background:var(--o-soft);color:var(--o-dark)}
+.st-done{background:var(--green-soft);color:var(--green)}
+.tag{background:var(--p-soft);color:var(--ink2);border:1px solid var(--p-line)}
+
+/* list & detail */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar select{width:auto;min-width:160px}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{background:#fff;border:1px solid var(--p-line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;cursor:pointer;text-align:left;width:100%}
+.item:hover{border-color:var(--p)}
+.item.sel{border-color:var(--p);box-shadow:0 0 0 2px rgba(146,28,149,.15)}
+.item .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink3)}
+.item .txt{grid-column:1/-1;color:var(--ink2);font-size:14px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.due{font-size:13px;font-weight:700;white-space:nowrap}
+.due.late{color:var(--red)}.due.soon{color:var(--amber)}.due.ok{color:var(--green)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
+@media (max-width:960px){.split{grid-template-columns:minmax(0,1fr)}}
+.kv{display:grid;grid-template-columns:96px minmax(0,1fr);gap:6px 12px;font-size:14px;margin:14px 0}
+.kv dt{color:var(--ink3)}.kv dd{margin:0}
+.timeline{list-style:none;margin:0;padding:0;border-left:2px solid var(--p-line);margin-left:6px}
+.timeline li{position:relative;padding:0 0 14px 18px;font-size:14px}
+.timeline li:before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--p)}
+.timeline li.sys:before{border-color:var(--o)}
+.timeline time{display:block;font-size:12px;color:var(--ink3)}
+.box{border:1px solid var(--p-line);border-radius:12px;padding:14px;margin-top:14px}
+.box h4{margin:0 0 10px;font-size:15px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hidden-content{background:repeating-linear-gradient(45deg,#F7F5FC,#F7F5FC 8px,#EFEBF8 8px,#EFEBF8 16px);border-radius:10px;padding:14px;color:var(--ink3);font-size:14px}
+.stars{display:flex;gap:6px}
+.stars button{border:0;background:none;cursor:pointer;padding:2px;min-width:40px;min-height:40px;color:#D6CFE6}
+.stars button.on{color:var(--o)}
+
+/* dashboard */
+.kpi{display:flex;flex-direction:column;gap:4px}
+.kpi span{color:var(--ink3);font-size:13px}
+.kpi b{font-size:30px;line-height:1.1;color:var(--p-deep)}
+.kpi small{color:var(--ink3);font-size:12px}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bars .b{display:grid;grid-template-columns:108px minmax(0,1fr) 40px;gap:10px;align-items:center;font-size:14px}
+.bars .track{background:var(--p-soft);border-radius:6px;height:16px;overflow:hidden}
+.bars .fill{background:var(--p);height:100%;border-radius:6px}
+.bars .n{text-align:right;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--p-line);vertical-align:top}
+th{color:var(--ink3);font-weight:600;font-size:13px;background:#FBFAFE}
+.tbl{overflow-x:auto}
+footer{color:var(--ink3);font-size:13px;text-align:center;padding:24px 0 40px}
+
+/* dialog */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--p-deep);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:90vw}
+.modal-bg{position:fixed;inset:0;background:rgba(28,22,50,.55);display:flex;align-items:center;justify-content:center;z-index:40;padding:20px}
+.modal{background:#fff;border-radius:18px;padding:28px;max-width:440px;width:100%;text-align:center}
+.modal .code{font-size:28px;font-weight:800;letter-spacing:2px;color:var(--p);background:var(--p-soft);border-radius:12px;padding:12px;margin:14px 0;font-family:ui-monospace,Menlo,Consolas,monospace}
+.empty{text-align:center;color:var(--ink3);padding:40px 10px}
+.receipt{border:1px solid var(--p-line);color:var(--ink);width:min(440px,calc(100% - 32px));box-shadow:0 20px 60px #1c16323b}.receipt::backdrop{background:#1c16328c}.receipt h3{margin:6px 0 0}.receipt p{color:var(--ink2)}
+.edition{font:600 11px/1.5 system-ui,sans-serif;letter-spacing:0;color:#fff1dc;background:#ffffff20;border:1px solid #ffffff70;border-radius:5px;padding:1px 5px;vertical-align:middle;white-space:nowrap}
+.demo-strip{background:#fff9ef;border-bottom:1px solid #eedfc8;color:#634a32;font-size:13px}
+.demo-strip .wrap{display:flex;gap:5px 12px;align-items:center;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+.demo-strip strong{color:#733e0a}.demo-strip span{color:#665951}
+.sample-card{background:var(--p-soft);border-left:3px solid var(--p);border-radius:0 10px 10px 0;padding:14px 16px;margin:4px 0 0;color:var(--ink2)}
+.sample-card strong{color:var(--p-dark);display:block;margin-bottom:4px}.sample-card p{margin:0}
+.sample-steps{padding-left:22px;color:var(--ink2)}.sample-steps li{padding:3px 0 10px}
+.field select{min-width:0;max-width:100%}.split>*,.grid>*{min-width:0}
+.desk-label{font-size:13px;color:var(--p-dark);background:var(--p-tint);border-radius:999px;padding:3px 10px;display:inline-block}
+.hero:before{pointer-events:none}.modal{max-height:90vh;overflow:auto}
+@media(max-width:600px){.wrap{padding-left:14px;padding-right:14px}.top .bar{gap:7px 14px}.brand{gap:9px}.brand img{height:32px;max-width:44vw;object-fit:contain}.brand .name b{font-size:18px}.brand .name span{font-size:10px}.roles button{font-size:12px;padding:4px 12px;min-height:32px}nav.sub a{padding:8px 10px}.demo-strip .wrap{gap:2px 8px}.demo-strip span{font-size:12px}main{padding-top:16px}.toolbar select{min-width:120px}.item{display:flex;flex-wrap:wrap;align-items:center}.item .txt{width:100%}.modal .code{font-size:23px}.card{padding:17px}.page-title{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="#home" aria-label="连心桥首页">
+      <img src="logo.png" alt="郑州软件职业技术学院">
+      <span class="sep" aria-hidden="true"></span>
+      <span class="name"><b>连心桥 <small class="edition">演示版</small></b><span>学生社区诉求服务平台</span></span>
+    </a>
+    <div class="roles" role="tablist" aria-label="切换演示视角" id="roles">
+      <button data-role="student" role="tab">学生端</button>
+      <button data-role="staff" role="tab">处置端</button>
+      <button data-role="admin" role="tab">管理端</button>
+    </div>
+  </div>
+  <nav class="sub" aria-label="栏目"><div class="wrap" id="subnav"></div></nav>
+</header>
+
+<div class="demo-strip"><div class="wrap"><strong>公开演示 · 不受理真实诉求</strong><span>只使用虚构案例，不发送给学校，刷新即可还原。</span></div></div>
+<main><div class="wrap" id="view"><noscript>此页面仅展示虚构案例，不受理真实诉求。请启用 JavaScript 体验页面。</noscript></div></main>
+<footer>郑州软件职业技术学院 · 连心桥学生社区诉求服务平台 · 设计演示</footer>
+
+<script>
+(function(){
+"use strict";
+/* ---------- constants ---------- */
+const H=3600e3, D=24*H;
+const CATS=[
+  {k:"live",n:"宿舍生活",d:"作息、卫生、噪音、费用分摊等"},
+  {k:"rel",n:"同学关系",d:"争吵、冷战、孤立、网络摩擦等"},
+  {k:"study",n:"学业就业",d:"考核、评优、实习就业压力等"},
+  {k:"mood",n:"心情困扰",d:"孤独、焦虑、情绪低落等"},
+  {k:"logi",n:"后勤管理",d:"维修、水电网络、门禁查寝等"},
+  {k:"idea",n:"意见建议",d:"对社区建设的想法和建议"}
+];
+const CATN=Object.fromEntries(CATS.map(c=>[c.k,c.n]));
+const BUILDINGS=["1号公寓楼","2号公寓楼","3号公寓楼","4号公寓楼","5号公寓楼","6号公寓楼"];
+const GRADES=["大一","大二","大三","大四"];
+const LV={urgent:{n:"紧急处置",resp:1,res:72},key:{n:"重点关注",resp:24,res:168},normal:{n:"一般关注",resp:48,res:168}};
+const LV_RANK={normal:0,key:1,urgent:2};
+const ROLES={grid:{n:"楼栋网格员"},counselor:{n:"辅导员"},party:{n:"楼栋党建工作站"},psych:{n:"心理教师"},logistics:{n:"后勤宿管"},office:{n:"工作专班"}};
+const KW_URGENT=["自杀","不想活","轻生","割腕","跳楼","寻死","结束生命","打架","动手打","被打","刀","威胁","偷","被盗","伤害"];
+const KW_KEY=["失眠","崩溃","绝望","撑不住","孤立","排挤","霸凌","针对我","吵架","冲突","辱骂","抑郁","焦虑"];
+const METHODS=["分别谈话","双方当面沟通","调整宿舍","心理疏导","朋辈调解","维修/服务改进","政策解释","转介其他部门"];
+const EXAMPLES={
+  logi:[["走廊照明","晚自习回来，楼梯转角的感应灯总要走近才亮。能不能把感应范围调大一些？"],["饮水机接水慢","晚饭后大家在饮水机前排队，热水出得很慢，希望后勤看看滤芯。"]],
+  live:[["洗衣房排队","周末晚上总有人在洗衣房等，想试试在门口贴一张空闲时段表。"],["熄灯后的声音","熄灯后洗漱区的关门声比较响，想和楼层同学商量一个安静时段。"]],
+  rel:[["小组分工","做小组作业时大家对分工看法不一样，希望有人帮忙约一次讨论。"],["公共桌的使用","室友都想用靠窗的公共桌，想听听大家有什么轮流使用的办法。"]],
+  study:[["实习材料找不到","准备实习时找了几处公告，都没找到最新版清单，想知道应该到哪里看。"],["复习计划","几门课的复习撞在一起，最近有些焦虑，希望有人帮忙理一理时间表。"]],
+  mood:[["刚搬进新宿舍","刚搬进新宿舍，对周围还不熟悉，想参加一场人数不多的交流活动。"],["上台前紧张","下周要在课上做展示，准备时有点紧张，想了解学校有哪些支持渠道。"]],
+  idea:[["自习室指引","第一次去公共自习室时绕了一圈。建议在楼梯口加一张楼层指引图。"],["闲置书交换","学期结束会剩下一些用不到的书，想在公寓公共区试办一次旧书交换。"]]
+};
+const FOLLOWUPS=["补充：下午时段也遇到了同样的情况。","补充：周三课后可以一起看看现场。","补充：已经看到回复，谢谢。"];
+const REPLIES=["已记下具体情况，会先和楼层值班同事核对。","已和相关同事沟通，正在安排下一步。","已完成现场确认，可以查看处理结果。"];
+const MINE=Object.create(null), CASES=Object.create(null);
+const UI={role:"student",me:{role:"grid",building:BUILDINGS[2]},sel:null,filterLv:"all",filterSt:"open",submitCat:"logi",trackSel:null};
+let sequence=0;
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const fmt=t=>{const d=new Date(t);return `${d.getMonth()+1}月${d.getDate()}日 ${pad(d.getHours())}:${pad(d.getMinutes())}`;};
+const dur=ms=>{const a=Math.abs(ms);if(a<H)return Math.max(1,Math.round(a/60000))+"分钟";if(a<2*D)return Math.round(a/H)+"小时";return Math.round(a/D)+"天";};
+function toast(msg){document.querySelectorAll(".toast").forEach(x=>x.remove());const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+function newId(){return "LXQ-"+String(++sequence).padStart(4,"0");}
+const clone=o=>JSON.parse(JSON.stringify(o));
+const ICON={
+  write:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  search:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  phone:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2Z"/></svg>',
+  lock:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  clock:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  people:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.5a5 5 0 0 1 6 5"/></svg>',
+  check:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>',
+  star:'<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
+};
+
+/* ---------- rules ---------- */
+function kwLevel(r){
+  const t=r.content||"";
+  if(r.urgentSelf||KW_URGENT.some(w=>t.includes(w))) return {lv:"urgent",why:r.urgentSelf?"学生自评紧急":"内容含高风险关键词"};
+  if(KW_KEY.some(w=>t.includes(w))) return {lv:"key",why:"内容含情绪或冲突关键词"};
+  return {lv:"normal",why:"常规诉求"};
+}
+function allRecs(){return [...Object.values(MINE),...Object.values(CASES)];}
+/* effective level: stored level, raised by repeat rule and by overdue response (derived, not written) */
+function eff(r,all){
+  let lv=r.level, notes=[];
+  if(!r.manualLevel&&r.dorm&&all&&all.some(x=>x.id!==r.id&&x.building===r.building&&x.dorm===r.dorm&&x.category===r.category&&x.createdAt<r.createdAt&&r.createdAt-x.createdAt<=14*D)){
+    if(LV_RANK[lv]<1){lv="key";notes.push("同一宿舍14天内同类诉求再次出现");}
+  }
+  let escAt=null;
+  if(!r.respondedAt&&r.status!=="已办结"){
+    let t=r.createdAt, cur=lv;
+    while(cur!=="urgent"&&Date.now()>t+LV[cur].resp*H){t=t+LV[cur].resp*H;cur=cur==="normal"?"key":"urgent";escAt=escAt||t;}
+    if(cur!==lv){notes.push(`超过首次响应时限，自动由“${LV[lv].n}”升级为“${LV[cur].n}”`);lv=cur;}
+  }
+  return {lv,escalated:!!escAt,escAt,notes};
+}
+function assigneesFor(r,lv){
+  const a=new Set(r.extraAssignees||[]);
+  if(lv==="urgent"){a.add("psych");a.add("office");a.add("counselor");}
+  else if(lv==="key"){a.add("party");a.add("counselor");}
+  else a.add("grid");
+  if(r.category==="logi") a.add("logistics");
+  if(r.category==="mood") a.add("psych");
+  return [...a];
+}
+function canSeeContent(r,lv,role){ if(r.category!=="mood"&&lv!=="urgent") return true; return role==="psych"||role==="office"; }
+function respDue(r,lv){return r.createdAt+LV[lv].resp*H;}
+function resDue(r,lv){return r.createdAt+LV[lv].res*H;}
+
+function writeRec(record,patch){Object.assign(record,patch);}
+function guard(action,message){action();if(message)toast(message);render(false);}
+function makeRecord(category,sample,building,options={}){
+  const createdAt=options.time??Date.now();
+  const record={id:newId(),createdAt,building,dorm:"",grade:"",category,content:EXAMPLES[category][sample][1],anonymous:true,contact:"",urgentSelf:!!options.urgent,source:options.source||"student",events:[],methods:[],result:"",rating:0,solved:null,respondedAt:null,resolvedAt:null,status:"待受理",collab:false,extraAssignees:[]};
+  const grade=kwLevel(record);
+  record.level=record.levelInit=grade.lv;
+  record.events.push({t:createdAt,who:record.source==="staff"?"楼栋网格员":"学生",text:record.source==="staff"?"走访记录已建立":"提交诉求"});
+  record.events.push({t:createdAt,who:"系统",sys:true,text:`自动分级为“${LV[grade.lv].n}”（${grade.why}），派发给：${assigneesFor(record,grade.lv).map(role=>ROLES[role].n).join("、")}`});
+  return record;
+}
+function seed(){
+  const started=Date.now();
+  const fixtures=[
+    {category:"live",sample:0,building:2,age:6,mine:true},
+    {category:"idea",sample:0,building:2,age:72,mine:true,reply:5,finish:30,method:"服务改进",summary:"楼层指引已张贴在楼梯口。"},
+    {category:"logi",sample:1,building:3,age:30,reply:3,source:"staff"},
+    {category:"study",sample:1,building:0,age:12},
+    {category:"mood",sample:0,building:2,age:19,reply:4},
+    {category:"rel",sample:0,building:4,age:235,reply:2,finish:49,method:"分别谈话",summary:"小组一起重新确认了分工。",rating:4},
+    {category:"logi",sample:0,building:1,age:538,reply:3,finish:23,method:"维修/服务改进",summary:"已调整楼梯照明感应范围。",rating:5},
+    {category:"idea",sample:1,building:5,age:780,reply:6,finish:100,method:"服务改进",summary:"在阅读角试设了旧书交换架。",source:"staff"}
+  ];
+  for(const fixture of fixtures){
+    const record=makeRecord(fixture.category,fixture.sample,BUILDINGS[fixture.building],{time:started-fixture.age*H,source:fixture.source});
+    if(fixture.reply){record.respondedAt=record.createdAt+fixture.reply*H;record.status="处理中";record.events.push({t:record.respondedAt,who:"值班老师",text:"已受理并核对情况。"});}
+    if(fixture.finish){Object.assign(record,{resolvedAt:record.createdAt+fixture.finish*H,status:"已办结",levelFinal:record.level,methods:[fixture.method],result:fixture.summary});record.events.push({t:record.resolvedAt,who:"值班老师",text:fixture.summary});}
+    if(fixture.rating){Object.assign(record,{rating:fixture.rating,solved:true});record.events.push({t:record.resolvedAt+H,who:"学生",text:`回访评价：${fixture.rating}星，问题已解决。`});}
+    (fixture.mine?MINE:CASES)[record.id]=record;
+  }
+}
+function openDesk(record){
+  const level=eff(record,allRecs()).lv;
+  const roles=assigneesFor(record,level);
+  const role=roles.includes("psych")?"psych":roles[0];
+  UI.me={role,building:record.building};UI.sel=record.id;UI.filterSt="all";UI.filterLv="all";location.hash="todo";
+}
+
+/* ---------- routing ---------- */
+const NAV={
+  student:[["home","首页"],["submit","我要反映"],["track","我的诉求"],["help","紧急求助"],["rules","平台规则"]],
+  staff:[["todo","我的待办"],["entry","线下录入"],["rules","平台规则"]],
+  admin:[["dash","数据看板"],["all","全部诉求"],["rules","平台规则"]]
+};
+const VIEW_ROLE={home:"student",submit:"student",track:"student",help:"student",todo:"staff",entry:"staff",dash:"admin",all:"admin"};
+function currentView(){
+  const h=(location.hash||"").slice(1);
+  if(Object.hasOwn(VIEW_ROLE,h)) UI.role=VIEW_ROLE[h];
+  const ok=NAV[UI.role].map(n=>n[0]);
+  return ok.includes(h)?h:ok[0];
+}
+let lastView=null;
+function render(scroll){
+  const v=currentView();
+  document.querySelectorAll(".roles button").forEach(b=>{const on=b.dataset.role===UI.role;b.classList.toggle("on",on);b.setAttribute("aria-selected",on);});
+  $("#subnav").innerHTML=NAV[UI.role].map(([k,n])=>`<a href="#${k}" class="${k===v?"on":""}">${n}</a>`).join("");
+  const fn={home:vHome,submit:vSubmit,track:vTrack,help:vHelp,rules:vRules,todo:vTodo,entry:vEntry,dash:vDash,all:vAll}[v];
+  $("#view").innerHTML=fn();
+  bind[v]&&bind[v]();
+  if(scroll!==false||v!==lastView) window.scrollTo(0,0);
+  lastView=v;
+}
+window.addEventListener("hashchange",()=>render(true));
+document.querySelectorAll(".roles button").forEach(b=>b.addEventListener("click",()=>{UI.role=b.dataset.role;UI.sel=null;location.hash=NAV[UI.role][0][0];}));
+const bind={};
+
+/* ---------- student views ---------- */
+function vHome(){
+  return `
+  <section class="hero">
+    <div>
+      <h1>连心桥<br><em>有事说出来，件件有回音</em></h1>
+      <p>从一盏不够亮的楼梯灯开始，看看一条学生诉求怎样走到值班老师桌上，再带着处理结果回到学生手里。</p>
+      <div class="cta"><a class="btn btn-o" href="#submit">${ICON.write} 体验提交</a><a class="btn btn-g" href="#track">${ICON.search} 查看进度</a></div>
+    </div>
+    <div class="promise">
+      <div>${ICON.lock}<p style="margin:0"><b>可以匿名</b><span>用预设案例走一遍，不需要姓名、学号或电话</span></p></div>
+      <div>${ICON.clock}<p style="margin:0"><b>限时响应</b><span>在示例工单中查看分级、响应时限和处理记录</span></p></div>
+      <div>${ICON.people}<p style="margin:0"><b>楼栋有人管</b><span>切换到处置端，体验网格员和老师如何接单</span></p></div>
+    </div>
+  </section>
+  <div class="grid g3" style="margin-top:22px">
+    <a class="card entry" href="#submit"><span class="ic">${ICON.write}</span><h3>我要反映</h3><p>从六类校园日常中选一个案例，体验提交。</p></a>
+    <a class="card entry" href="#track"><span class="ic">${ICON.search}</span><h3>我的诉求</h3><p>查看处理进度和老师回复，办结后评价。</p></a>
+    <a class="card entry alert" href="#help"><span class="ic">${ICON.phone}</span><h3>紧急求助</h3><p>真实紧急情况请直接求助，不要在这里等回复。</p></a>
+  </div>
+  <div class="card" style="margin-top:22px">
+    <h3 style="font-size:18px;margin-bottom:14px">一条诉求是怎么被处理的</h3>
+    <div class="steps">
+      <div class="on"><b>1 提交</b><span>选类别，写清楚情况</span></div>
+      <div class="on"><b>2 分级派单</b><span>按轻重缓急派给负责人</span></div>
+      <div class="on"><b>3 限时处理</b><span>超时自动上报上一级</span></div>
+      <div class="on"><b>4 办结回复</b><span>告诉你处理方式和结果</span></div>
+      <div class="on"><b>5 回访评价</b><span>不满意可退回重办</span></div>
+    </div>
+  </div>`;
+}
+function sampleSelect(category){
+  return EXAMPLES[category].map(([title],index)=>`<option value="${index}">${esc(title)}</option>`).join("");
+}
+function buildingSelect(selected){
+  return BUILDINGS.map(building=>`<option${building===selected?" selected":""}>${esc(building)}</option>`).join("");
+}
+function textOptions(choices){
+  return choices.map((value,index)=>`<option value="${index}">${esc(value)}</option>`).join("");
+}
+function vSubmit(){
+  const category=UI.submitCat;
+  return `<div class="page-title"><div><h2>我要反映</h2><p>选一个校园场景，看看它会怎样被分派。</p></div></div>
+    <div class="split"><section class="card" aria-label="学生体验">
+    <div class="field"><label>问题类别</label><div class="chips" id="catChips">${CATS.map(item=>`<button class="chip${item.k===category?" on":""}" aria-pressed="${item.k===category}" type="button" data-k="${item.k}">${item.n}</button>`).join("")}</div></div>
+    <div class="grid g2" style="gap:14px"><div class="field"><label for="sB">所在楼栋</label><select id="sB">${buildingSelect(BUILDINGS[2])}</select></div>
+    <div class="field"><label for="sCase">体验场景</label><select id="sCase">${sampleSelect(category)}</select></div></div>
+    <div class="field"><label id="sampleLabel">具体情况</label><div class="sample-card" aria-labelledby="sampleLabel"><p id="sPreview">${esc(EXAMPLES[category][0][1])}</p></div></div>
+    <div class="field"><label class="switch"><input type="checkbox" id="sA" checked> 以匿名学生身份体验</label><span class="hint">关闭后显示“体验账号”，不用填写联系方式。</span></div>
+    <div class="field"><label class="switch"><input type="checkbox" id="sU"> 体验紧急事项的分级流程</label></div>
+    <button id="sSend" class="btn btn-p" type="button" style="width:100%">提交示例诉求</button></section>
+    <aside class="card"><h3 style="font-size:18px">接下来可以体验</h3>
+    <ol class="sample-steps"><li><b>学生提交</b><br>选择一个案例，获得本次体验的编号。</li><li><b>值班老师处置</b><br>打开同一条工单，受理、回复并登记处理结果。</li><li><b>回到学生端</b><br>在“我的诉求”里查看回复，给这次处理打分。</li></ol>
+    <div class="note">没有人在此接单，页面不会把信息发给学校。要反映真实问题，请使用学校正式渠道。</div></aside></div>`;
+}
+bind.submit=function(){
+  const refreshSample=()=>{$("#sPreview").textContent=EXAMPLES[UI.submitCat][Number($("#sCase").value)][1];};
+  $("#catChips").addEventListener("click",event=>{
+    const button=event.target.closest("[data-k]");if(!button)return;
+    UI.submitCat=button.dataset.k;
+    for(const chip of document.querySelectorAll("#catChips button")){const selected=chip===button;chip.classList.toggle("on",selected);chip.setAttribute("aria-pressed",selected);}
+    $("#sCase").innerHTML=sampleSelect(UI.submitCat);refreshSample();
+  });
+  $("#sCase").addEventListener("change",refreshSample);
+  $("#sSend").addEventListener("click",()=>{
+    const record=makeRecord(UI.submitCat,Number($("#sCase").value),$("#sB").value,{urgent:$("#sU").checked});
+    record.anonymous=$("#sA").checked;MINE[record.id]=record;UI.trackSel=record.id;showCode(record);
+  });
+};
+function showCode(record){
+  const dialog=document.createElement("dialog");dialog.className="modal receipt";dialog.setAttribute("aria-labelledby","receiptTitle");
+  dialog.innerHTML=`<div style="color:var(--green)">${ICON.check}</div><h3 id="receiptTitle">示例工单已生成</h3><div class="code">${record.id}</div>
+    <p>这条工单只在本页演示，没有实际派单或通知老师。</p><div class="row" style="justify-content:center">
+    <button class="btn btn-p" id="mStaff" type="button">去处置端接单</button><button class="btn btn-g" id="mGo" type="button">查看我的进度</button></div>`;
+  document.body.append(dialog);
+  dialog.querySelector("#mStaff").onclick=()=>{dialog.close();openDesk(record);};
+  dialog.querySelector("#mGo").onclick=()=>{dialog.close();location.hash="track";};
+  dialog.addEventListener("close",()=>dialog.remove(),{once:true});dialog.showModal();
+}
+function vTrack(){
+  const list=Object.values(MINE).sort((a,b)=>b.createdAt-a.createdAt);
+  const sel=UI.trackSel&&MINE[UI.trackSel]?MINE[UI.trackSel]:list[0];
+  return `
+  <div class="page-title"><div><h2>我的诉求</h2><p>体验账号的示例工单和处理进度，刷新前可以在三个视角之间来回查看。</p></div></div>
+  ${!list.length?`<div class="card empty">还没有示例工单。<a href="#submit">去体验提交</a></div>`:`
+  <div class="split">
+    <div class="list" id="myList">${list.map(r=>`<button class="item ${sel&&sel.id===r.id?"sel":""}" data-id="${r.id}"><div class="meta">${stBadge(r)}<span class="badge tag">${CATN[r.category]}</span><span>${fmt(r.createdAt)}</span></div><span style="font-size:13px;color:var(--ink3)">${r.id}</span><div class="txt">${esc(r.content)}</div></button>`).join("")}</div>
+    <div>${sel?trackDetail(sel):""}</div>
+  </div>`}`;
+}
+function trackDetail(r){
+  const canRate=r.status==="已办结"&&!r.rating;
+  return `<div class="card">
+      <div class="row" style="justify-content:space-between"><h3 style="font-size:18px">${r.id}</h3>${stBadge(r)}</div>
+      <dl class="kv"><dt>类别</dt><dd>${CATN[r.category]}</dd><dt>提交时间</dt><dd>${fmt(r.createdAt)}</dd><dt>楼栋</dt><dd>${esc(r.building)}</dd>${r.result?`<dt>处理结果</dt><dd>${esc(r.result)}（${esc((r.methods||[]).join("、"))}）</dd>`:""}</dl>
+      <div class="note">${esc(r.content)}</div>
+      <h4 style="margin:18px 0 10px;font-size:15px">处理进度</h4>${timeline(r,true)}
+      ${r.status!=="已办结"?`<div class="box"><h4>补充说明</h4><label for="addTxt">选择一条示例补充</label><select id="addTxt">${textOptions(FOLLOWUPS)}</select><div class="row" style="margin-top:10px"><button class="btn btn-g btn-sm" type="button" id="fAdd">添加补充</button><button class="btn btn-g btn-sm" type="button" id="trackDesk">去处置端查看</button></div></div>`:""}
+      ${canRate?`<div class="box"><h4>请评价这次处理</h4><div class="stars" id="stars">${[1,2,3,4,5].map(i=>`<button type="button" data-v="${i}" aria-label="${i}星">${ICON.star}</button>`).join("")}</div><div class="row" style="margin-top:10px"><label class="switch"><input type="radio" name="sv" value="1" checked> 问题已解决</label><label class="switch"><input type="radio" name="sv" value="0"> 没有解决（退回重办）</label></div><div class="row" style="margin-top:12px"><button class="btn btn-o" id="rateBtn">提交评价</button></div></div>`:""}
+      ${r.rating?`<div class="box"><h4>你的评价</h4>${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)} · ${r.solved?"已解决":"未解决"}</div>`:""}
+  </div>`;
+}
+bind.track=function(){
+  const ml=$("#myList"); if(ml) ml.addEventListener("click",e=>{const b=e.target.closest(".item");if(!b)return;UI.trackSel=b.dataset.id;render(false);});
+  const list=Object.values(MINE).sort((a,b)=>b.createdAt-a.createdAt);
+  const r=UI.trackSel&&MINE[UI.trackSel]?MINE[UI.trackSel]:list[0]; if(!r) return;
+  const add=$("#fAdd");
+  if(add)add.onclick=()=>{const note=FOLLOWUPS[Number($("#addTxt").value)];guard(()=>r.events.push({t:Date.now(),who:"学生",text:"补充说明："+note}),"示例补充已加入本页记录");};
+  const desk=$("#trackDesk");if(desk)desk.onclick=()=>openDesk(r);
+  let stars=0; const st=$("#stars");
+  if(st){st.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;stars=+b.dataset.v;st.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.v<=stars));});
+    $("#rateBtn").addEventListener("click",()=>{if(!stars){toast("请先选择星级");return;}const solved=document.querySelector("input[name=sv]:checked").value==="1";const t=Date.now();const ev=clone(r.events);ev.push({t,who:"学生",text:`回访评价：${stars}星，${solved?"问题已解决":"问题没有解决"}`});
+      const patch={rating:stars,solved,events:ev};
+      if(!solved){ev.push({t:t+1000,who:"系统",sys:true,text:"学生反馈未解决，已退回重办"});Object.assign(patch,{status:"处理中",resolvedAt:null,reopened:true});}
+      guard(()=>writeRec(r,patch),solved?"感谢你的评价":"已退回重办，老师会继续跟进");});}
+};
+function vHelp(){
+  return `<div class="page-title"><div><h2>紧急求助</h2><p>本页不接警、不接单，也不会通知老师。遇到真实紧急情况，请直接向现场人员或当地紧急服务求助。</p></div></div>
+    <div class="grid g3"><section class="card"><h3 style="color:var(--red)">人身安全</h3><p>遇到危险或有人受伤，请优先保证自身安全并直接联系当地紧急服务。</p><b>校园保卫值班室</b><p class="hint">校内联系方式请以学校官方通讯录为准。</p></section>
+    <section class="card"><h3 style="color:var(--p)">心理支持</h3><p>需要支持时，可以向身边可信任的人或学校正式心理服务渠道求助。</p><b>心理健康教育中心</b><p class="hint">咨询地点和开放时间请以学校公布的信息为准。</p></section>
+    <section class="card"><h3 style="color:var(--o-dark)">宿舍值班</h3><p>门禁、停水或其他夜间突发情况，可直接到公寓值班台寻求帮助。</p><b>公寓值班台 · 辅导员</b><p class="hint">请核对楼栋现场公示的值班安排。</p></section></div>`;
+}
+function vRules(){
+  return `<div class="page-title"><div><h2>平台规则</h2><p>以下是设计中的分级与时限，用于理解示例，不代表学校已开通或承诺这些服务。</p></div></div>
+  <div class="card tbl"><table><thead><tr><th>等级</th><th>触发条件</th><th>派发给</th><th>首次响应</th><th>办结时限</th></tr></thead><tbody>
+    <tr><td><span class="badge lv-urgent">紧急处置</span></td><td>涉及伤害自己或他人、肢体冲突、财物安全；学生自选“紧急”</td><td>心理教师、工作专班、辅导员同时</td><td>1小时内</td><td>按应急预案</td></tr>
+    <tr><td><span class="badge lv-key">重点关注</span></td><td>同一宿舍14天内同类诉求再次出现；情绪或冲突关键词；一般事项超时</td><td>楼栋党建工作站、辅导员</td><td>24小时内</td><td>7天</td></tr>
+    <tr><td><span class="badge lv-normal">一般关注</span></td><td>其余诉求</td><td>楼栋网格员；后勤类同时给宿管</td><td>48小时内</td><td>7天</td></tr>
+  </tbody></table></div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><h3 style="font-size:17px;margin-bottom:10px">处理规则</h3><ul style="margin:0;padding-left:18px;color:var(--ink2)"><li>超过首次响应时限未处理，自动升级一级并转给上一级负责人。</li><li>复杂事项可发起会商，由辅导员、思政课教师、心理教师共同处理。</li><li>办结时须写明处理方式和结果；学生反馈未解决的，退回重办。</li><li>示例关键词仅用于展示分级逻辑，不作实际评估。</li></ul></div>
+    <div class="card"><h3 style="font-size:17px;margin-bottom:10px">隐私设计</h3><ul style="margin:0;padding-left:18px;color:var(--ink2)"><li>匿名诉求不向处理人员显示姓名和联系方式。</li><li>网格员只处理本楼栋的诉求；心情困扰类全文只有心理教师和工作专班可见。</li><li>学生只能看到自己提交的诉求。</li><li>演示数据来自虚构案例，没有真实学生记录。</li><li>本页不采集姓名、电话、学号或自由填写的内容。</li></ul></div>
+  </div>`;
+}
+
+/* ---------- shared bits ---------- */
+function lvBadge(lv,escd){return `<span class="badge lv-${lv}">${LV[lv].n}${escd?" · 已升级":""}</span>`;}
+function stBadge(r){const c={"待受理":"st-wait","处理中":"st-doing","已办结":"st-done"}[r.status]||"st-wait";return `<span class="badge ${c}">${r.status}</span>`;}
+function dueInfo(r,lv,now){
+  if(r.status==="已办结") return `<span class="due ok">已办结</span>`;
+  if(!r.respondedAt){const left=respDue(r,lv)-now;return left<0?`<span class="due late">响应已超时 ${dur(left)}</span>`:`<span class="due ${left<6*H?"soon":"ok"}">响应剩余 ${dur(left)}</span>`;}
+  const left=resDue(r,lv)-now;return left<0?`<span class="due late">办结已超时 ${dur(left)}</span>`:`<span class="due ${left<D?"soon":"ok"}">办结剩余 ${dur(left)}</span>`;
+}
+function timeline(r,studentView,e){
+  const evs=(r.events||[]).slice();
+  if(e&&e.escalated) evs.push({t:e.escAt,who:"系统",sys:true,text:e.notes.filter(n=>n.startsWith("超过")).join("；")+"，示例工单转至上一级"});
+  return `<ol class="timeline">${evs.sort((a,b)=>a.t-b.t).map(ev=>`<li class="${ev.sys?"sys":""}"><time>${fmt(ev.t)} · ${esc(studentView&&ev.who!=="学生"&&ev.who!=="系统"?"处理老师":ev.who)}</time>${esc(studentView&&ev.sys&&ev.text.includes("派发给")?ev.text.replace(/（.*?）/,""):ev.text)}</li>`).join("")}</ol>`;
+}
+
+/* ---------- staff views ---------- */
+function staffList(){
+  const all=allRecs();
+  return all.map(r=>{const e=eff(r,all);return {r,e,as:assigneesFor(r,e.lv)};});
+}
+function myRecs(){
+  const me=UI.me;
+  return staffList().filter(item=>me.role==="office"||(item.as.includes(me.role)&&(me.role!=="grid"||item.r.building===me.building)));
+}
+function vTodo(){
+  const now=Date.now();
+  let list=myRecs();
+  if(UI.filterSt==="open") list=list.filter(x=>x.r.status!=="已办结"); else if(UI.filterSt==="done") list=list.filter(x=>x.r.status==="已办结");
+  if(UI.filterLv!=="all") list=list.filter(x=>x.e.lv===UI.filterLv);
+  const rk={urgent:0,key:1,normal:2};
+  const due=x=>x.r.respondedAt?resDue(x.r,x.e.lv):respDue(x.r,x.e.lv);
+  list.sort((a,b)=>(a.r.status==="已办结")-(b.r.status==="已办结")||rk[a.e.lv]-rk[b.e.lv]||due(a)-due(b));
+  const sel=list.find(item=>item.r.id===UI.sel);
+  return `
+  <div class="page-title"><div><h2>我的待办</h2><p><span class="desk-label">值班工作台 A-03</span> 按风险等级和剩余时间排列。</p></div>
+    <div class="row"><label for="meRole" style="font-size:14px;color:var(--ink3)">当前身份</label><select id="meRole" style="width:auto">${Object.entries(ROLES).map(([k,v])=>`<option value="${k}" ${UI.me.role===k?"selected":""}>${v.n}</option>`).join("")}</select>
+    ${UI.me.role==="grid"?`<select id="meB" style="width:auto" aria-label="负责楼栋">${BUILDINGS.map(b=>`<option ${UI.me.building===b?"selected":""}>${b}</option>`).join("")}</select>`:""}</div></div>
+  <div class="toolbar">
+    <select id="fSt" aria-label="状态"><option value="open" ${UI.filterSt==="open"?"selected":""}>未办结</option><option value="done" ${UI.filterSt==="done"?"selected":""}>已办结</option><option value="all" ${UI.filterSt==="all"?"selected":""}>全部</option></select>
+    <select id="fLv" aria-label="等级"><option value="all">全部等级</option>${Object.entries(LV).map(([k,v])=>`<option value="${k}" ${UI.filterLv===k?"selected":""}>${v.n}</option>`).join("")}</select>
+    <span style="color:var(--ink3);font-size:14px">共 ${list.length} 条</span>
+  </div>
+  <div class="split">
+    <div class="list" id="todoList">${list.length?list.map(({r,e})=>`<button class="item ${UI.sel===r.id?"sel":""}" data-id="${r.id}"><div class="meta">${lvBadge(e.lv,e.escalated)}${stBadge(r)}<span class="badge tag">${CATN[r.category]}</span><span>${esc(r.building)}</span></div>${dueInfo(r,e.lv,now)}<div class="txt">${canSeeContent(r,e.lv,UI.me.role)?esc(r.content):"（仅心理教师和工作专班可见）"}</div></button>`).join(""):`<div class="card empty">当前没有待办事项</div>`}</div>
+    <div>${sel?staffDetail(sel,now):`<div class="card empty">在左侧选择一条诉求查看详情</div>`}</div>
+  </div>`;
+}
+function staffDetail(x,now){
+  const {r,e,as}=x; const see=canSeeContent(r,e.lv,UI.me.role);
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between"><h3 style="font-size:18px">${r.id}</h3><div class="row">${lvBadge(e.lv,e.escalated)}${stBadge(r)}</div></div>
+    <dl class="kv"><dt>类别</dt><dd>${CATN[r.category]}</dd><dt>位置</dt><dd>${esc(r.building)}${r.dorm?" "+esc(r.dorm)+"室":""}</dd><dt>提交人</dt><dd>${r.source==="staff"?"线下录入（主动发现）":r.anonymous?"匿名":"体验账号"}</dd><dt>提交时间</dt><dd>${fmt(r.createdAt)}</dd><dt>时限</dt><dd>${dueInfo(r,e.lv,now)}</dd><dt>负责</dt><dd>${as.map(a=>ROLES[a].n).join("、")}</dd>${e.notes.length?`<dt>分级说明</dt><dd>${esc(e.notes.join("；"))}</dd>`:""}</dl>
+    ${see?`<div class="note">${esc(r.content)}</div>`:`<div class="hidden-content">此条为心情困扰或紧急事项，全文仅心理教师和工作专班可见。你可以协助联络，但请勿打听具体内容。</div>`}
+    ${r.status!=="已办结"?`
+    <div class="box"><h4>处理操作</h4>
+      <div class="row">${!r.respondedAt?`<button class="btn btn-p btn-sm" id="aResp">受理并首次响应</button>`:""}
+        <select id="aTo" style="width:auto;min-height:36px" aria-label="转派"><option value="">转派给…</option>${Object.entries(ROLES).filter(([k])=>!as.includes(k)).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")}</select>
+        <button class="btn btn-g btn-sm" id="aCollab">发起会商</button>
+        <select id="aLv" style="width:auto;min-height:36px" aria-label="调整等级">${Object.entries(LV).map(([k,v])=>`<option value="${k}" ${e.lv===k?"selected":""}>${v.n}</option>`).join("")}</select>
+      </div>
+      <div class="field" style="margin:12px 0 8px"><label for="aNote">处理记录（示例回复）</label><select id="aNote">${textOptions(REPLIES)}</select></div>
+      <div class="row"><button class="btn btn-g btn-sm" id="aSaveNote">保存记录</button></div>
+    </div>
+    <div class="box"><h4>办结</h4>
+      <div class="field"><label>处理方式（可多选）</label><div class="chips" id="aM">${METHODS.map(m=>`<button type="button" class="chip" data-m="${m}">${m}</button>`).join("")}</div></div>
+      <div class="field"><label for="aRes">处理结果</label><select id="aRes"><option>已解决</option><option>部分解决</option><option>未能解决（已说明原因）</option></select></div>
+      <button class="btn btn-o" id="aDone" ${r.respondedAt?"":"disabled title='请先受理'"}>确认办结</button>
+    </div>`:""}
+    <div class="box"><h4>处理记录</h4>${timeline(r,false,e)}</div>${MINE[r.id]?`<button class="btn btn-g btn-sm" style="margin-top:14px" id="backStudent" type="button">回到学生端查看</button>`:""}
+  </div>`;
+}
+bind.todo=function(){
+  $("#meRole").addEventListener("change",ev=>{UI.me.role=ev.target.value;UI.sel=null;render(false);});
+  const mb=$("#meB"); if(mb) mb.addEventListener("change",ev=>{UI.me.building=ev.target.value;UI.sel=null;render(false);});
+  $("#fSt").addEventListener("change",ev=>{UI.filterSt=ev.target.value;UI.sel=null;render(false);});
+  $("#fLv").addEventListener("change",ev=>{UI.filterLv=ev.target.value;UI.sel=null;render(false);});
+  $("#todoList").addEventListener("click",ev=>{const b=ev.target.closest(".item");if(!b)return;UI.sel=b.dataset.id;render(false);});
+  const x=UI.sel?myRecs().find(item=>item.r.id===UI.sel):null;
+  const back=$("#backStudent");if(back&&x)back.onclick=()=>{UI.trackSel=x.r.id;location.hash="track";};
+  if(!x||x.r.status==="已办结"||!$("#aTo"))return;
+  const r=x.r, who=ROLES[UI.me.role].n+(UI.me.role==="grid"?"（"+UI.me.building+"）":"");
+  const act=(text,patch,msg)=>{const evs=clone(r.events||[]);evs.push({t:Date.now(),who,text});guard(()=>writeRec(r,Object.assign({events:evs},patch||{})),msg);};
+  const resp=$("#aResp"); if(resp) resp.addEventListener("click",()=>act("已受理，正在了解情况",{respondedAt:Date.now(),status:"处理中"},"已受理"));
+  $("#aTo").addEventListener("change",ev=>{const k=ev.target.value;if(!k)return;act(`转派给${ROLES[k].n}协同处理`,{extraAssignees:[...new Set([...(r.extraAssignees||[]),k])]},"已转派");});
+  $("#aCollab").addEventListener("click",()=>act("发起会商：辅导员、思政课教师、心理教师共同研判",{collab:true,extraAssignees:[...new Set([...(r.extraAssignees||[]),"counselor","psych","party"])]},"已发起会商"));
+  $("#aLv").addEventListener("change",ev=>{const k=ev.target.value;if(k===x.e.lv)return;act(`人工调整等级：由“${LV[x.e.lv].n}”改为“${LV[k].n}”`,{level:k,manualLevel:true},"已调整等级");});
+  $("#aSaveNote").addEventListener("click",()=>act(REPLIES[Number($("#aNote").value)],null,"示例回复已加入处理记录"));
+  const chosen=new Set();
+  $("#aM").addEventListener("click",ev=>{const b=ev.target.closest(".chip");if(!b)return;const m=b.dataset.m;chosen.has(m)?chosen.delete(m):chosen.add(m);b.classList.toggle("on");});
+  $("#aDone").addEventListener("click",()=>{if(!chosen.size){toast("请选择处理方式");return;}const res=$("#aRes").value;act(`办结：${[...chosen].join("、")}，结果“${res}”`,{status:"已办结",resolvedAt:Date.now(),methods:[...chosen],result:res,levelFinal:x.e.lv,escalated:x.e.escalated},"已办结，学生可以看到结果并评价");});
+};
+function vEntry(){
+  return `<div class="page-title"><div><h2>线下录入</h2><p>用一次楼栋走访，体验如何把线下发现的事项交给值班台。</p></div></div>
+    <section class="card" style="max-width:720px"><div class="grid g2">
+    <div class="field"><label for="eCat">类别</label><select id="eCat">${CATS.map(category=>`<option value="${category.k}">${category.n}</option>`).join("")}</select></div>
+    <div class="field"><label for="eB">楼栋</label><select id="eB">${buildingSelect(UI.me.building)}</select></div></div>
+    <div class="field"><label for="eCase">走访案例</label><select id="eCase">${sampleSelect("live")}</select><div class="sample-card" id="ePreview">${esc(EXAMPLES.live[0][1])}</div></div>
+    <button class="btn btn-p" type="button" id="eSend">录入示例并查看工单</button></section>`;
+}
+bind.entry=function(){
+  const preview=()=>{$("#ePreview").textContent=EXAMPLES[$("#eCat").value][Number($("#eCase").value)][1];};
+  $("#eCat").onchange=()=>{$("#eCase").innerHTML=sampleSelect($("#eCat").value);preview();};
+  $("#eCase").onchange=preview;
+  $("#eSend").onclick=()=>{const record=makeRecord($("#eCat").value,Number($("#eCase").value),$("#eB").value,{source:"staff"});CASES[record.id]=record;openDesk(record);toast("已在本页生成示例工单");};
+};
+
+/* ---------- admin views ---------- */
+function stats(){
+  const L=staffList(), recs=L.map(x=>x.r);
+  const resp=recs.filter(r=>r.respondedAt).map(r=>(r.respondedAt-r.createdAt)/H).sort((a,b)=>a-b);
+  const middle=Math.floor(resp.length/2);const med=!resp.length?0:resp.length%2?resp[middle]:(resp[middle-1]+resp[middle])/2;
+  const done=L.filter(x=>x.r.status==="已办结");
+  const ontime=done.filter(x=>x.r.resolvedAt<=resDue(x.r,x.r.levelFinal||x.e.lv)).length;
+  const rated=recs.filter(r=>r.rating);
+  const sat=rated.length?rated.reduce((s,r)=>s+r.rating,0)/rated.length:0;
+  const recur=done.filter(({r})=>r.dorm&&recs.some(x=>x!==r&&x.building===r.building&&x.dorm===r.dorm&&x.category===r.category&&x.createdAt>r.resolvedAt&&x.createdAt-r.resolvedAt<=14*D)).length;
+  const active=recs.filter(r=>r.source==="staff").length;
+  const escN=L.filter(x=>x.e.escalated||x.r.escalated).length;
+  return {L,total:recs.length,open:recs.filter(r=>r.status!=="已办结").length,med,hasResp:resp.length>0,ontime:done.length?ontime/done.length:null,sat,ratedN:rated.length,recur:done.length?recur/done.length:null,active:recs.length?active/recs.length:null,escRate:recs.length?escN/recs.length:null,doneN:done.length};
+}
+function barList(pairs){const max=Math.max(1,...pairs.map(p=>p[1]));return `<div class="bars">${pairs.map(([k,v])=>`<div class="b"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><span class="n">${v}</span></div>`).join("")}</div>`;}
+function trend(recs){
+  const now=Date.now(), weeks=8, W=7*D;
+  const counts=Array.from({length:weeks},(_,i)=>recs.filter(r=>r.createdAt>now-(weeks-i)*W&&r.createdAt<=now-(weeks-i-1)*W).length);
+  const max=Math.max(4,...counts), w=560, h=180, px=40, py=20;
+  const x=i=>px+i*((w-px-16)/(weeks-1)), y=v=>h-py-(v/max)*(h-2*py);
+  const pts=counts.map((c,i)=>`${x(i).toFixed(1)},${y(c).toFixed(1)}`).join(" ");
+  const ticks=[0,Math.round(max/2),max];
+  return `<svg viewBox="0 0 ${w} ${h+24}" role="img" aria-label="近8周诉求数量：${counts.join("、")}" style="width:100%;height:auto">
+    ${ticks.map(t=>`<line x1="${px}" x2="${w-16}" y1="${y(t)}" y2="${y(t)}" stroke="#E4DEF3"/><text x="${px-8}" y="${y(t)+4}" text-anchor="end" font-size="12" fill="#6E6985">${t}</text>`).join("")}
+    <polyline points="${pts}" fill="none" stroke="#921C95" stroke-width="3" stroke-linejoin="round"/>
+    ${counts.map((c,i)=>`<circle cx="${x(i)}" cy="${y(c)}" r="4.5" fill="#fff" stroke="#921C95" stroke-width="2.5"><title>${c}条</title></circle><text x="${x(i)}" y="${h+14}" text-anchor="middle" font-size="12" fill="#6E6985">${i===weeks-1?"本周":(weeks-1-i)+"周前"}</text>`).join("")}
+  </svg>`;
+}
+function vDash(){
+  const s=stats(), recs=s.L.map(x=>x.r);
+  const pct=v=>v==null?"—":(v*100).toFixed(0)+"%";
+  const byCat=CATS.map(c=>[c.n,recs.filter(r=>r.category===c.k).length]).sort((a,b)=>b[1]-a[1]);
+  const byB=BUILDINGS.map(b=>[b,recs.filter(r=>r.building===b).length]);
+  const byLv=Object.entries(LV).map(([k,v])=>[v.n,s.L.filter(x=>x.e.lv===k).length]);
+  return `<div class="page-title"><div><h2>数据看板</h2><p>统计仅来自虚构案例及本页操作，不代表学校真实运行情况。</p></div><button class="btn btn-g" id="copyCsv" ${s.total?"":"disabled"}>复制示例数据（CSV）</button></div>
+  ${!s.total?`<div class="card empty">还没有诉求数据。学生提交或线下录入后，这里会自动统计。</div>`:`
+  <div class="grid g4">
+    <div class="card kpi"><span>诉求总数</span><b>${s.total}</b><small>未办结 ${s.open} 条</small></div>
+    <div class="card kpi"><span>首次响应时长（中位数）</span><b>${s.hasResp?s.med.toFixed(1):"—"}<span style="font-size:16px;color:var(--ink3)"> 小时</span></b><small>从提交到有人受理</small></div>
+    <div class="card kpi"><span>按期办结率</span><b>${pct(s.ontime)}</b><small>已办结 ${s.doneN} 条</small></div>
+    <div class="card kpi"><span>回访满意度</span><b>${s.ratedN?s.sat.toFixed(1):"—"}<span style="font-size:16px;color:var(--ink3)"> / 5</span></b><small>${s.ratedN} 人评价</small></div>
+    <div class="card kpi"><span>同类复发率</span><b>${pct(s.recur)}</b><small>办结后14天内同宿舍同类再现</small></div>
+    <div class="card kpi"><span>主动发现占比</span><b>${pct(s.active)}</b><small>线下录入</small></div>
+    <div class="card kpi"><span>超时升级比例</span><b>${pct(s.escRate)}</b><small>未在时限内响应</small></div>
+    <div class="card kpi"><span>重点及紧急事项</span><b>${s.L.filter(x=>x.e.lv!=="normal").length}</b><small>当前等级</small></div>
+  </div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><h3 style="font-size:17px;margin-bottom:12px">近8周诉求数量</h3>${trend(recs)}</div>
+    <div class="card"><h3 style="font-size:17px;margin-bottom:14px">按类别</h3>${barList(byCat)}</div>
+    <div class="card"><h3 style="font-size:17px;margin-bottom:14px">按楼栋</h3>${barList(byB)}</div>
+    <div class="card"><h3 style="font-size:17px;margin-bottom:14px">按风险等级</h3>${barList(byLv)}</div>
+  </div>`}`;
+}
+bind.dash=function(){
+  const b=$("#copyCsv"); if(!b) return;
+  b.addEventListener("click",()=>{
+    const head=["演示编号","提交时间","楼栋","年级","类别","来源","是否匿名","初始等级","当前等级","是否超时升级","首次响应(小时)","办结(小时)","是否会商","处理方式","处理结果","满意度","是否解决"];
+    const rows=staffList().map(({r,e})=>[r.id,new Date(r.createdAt).toISOString(),r.building,r.grade,CATN[r.category],r.source==="staff"?"主动发现":"学生提交",r.anonymous?"是":"否",LV[r.levelInit||r.level].n,LV[r.levelFinal||e.lv].n,(e.escalated||r.escalated)?"是":"否",r.respondedAt?((r.respondedAt-r.createdAt)/H).toFixed(1):"",r.resolvedAt?((r.resolvedAt-r.createdAt)/H).toFixed(1):"",r.collab?"是":"否",(r.methods||[]).join("/"),r.result||"",r.rating||"",r.solved==null?"":(r.solved?"是":"否")]);
+    const csv=[head,...rows].map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+    try{navigator.clipboard.writeText(csv).then(()=>toast(`已复制 ${rows.length} 条（不含内容、宿舍号、联系方式）`),()=>toast("复制失败"));}catch(e){toast("复制失败");}
+  });
+};
+function vAll(){
+  const now=Date.now();
+  const list=staffList().sort((a,b)=>b.r.createdAt-a.r.createdAt);
+  return `<div class="page-title"><div><h2>全部诉求</h2><p>共 ${list.length} 条虚构工单。点击编号以工作专班身份处理。</p></div></div>
+  ${!list.length?`<div class="card empty">还没有诉求。</div>`:`<div class="card tbl" style="padding:0"><table><thead><tr><th>编号</th><th>时间</th><th>楼栋</th><th>类别</th><th>等级</th><th>状态</th><th>时限</th><th>满意度</th></tr></thead><tbody>
+  ${list.map(({r,e})=>`<tr><td><button class="btn btn-g btn-sm" data-id="${r.id}" style="min-height:32px">${r.id}</button></td><td>${fmt(r.createdAt)}</td><td>${esc(r.building)}</td><td>${CATN[r.category]}${r.source==="staff"?" <span class='badge tag'>主动发现</span>":""}</td><td>${lvBadge(e.lv,e.escalated)}</td><td>${stBadge(r)}</td><td>${dueInfo(r,e.lv,now)}</td><td>${r.rating?r.rating+" 星":"—"}</td></tr>`).join("")}
+  </tbody></table></div>`}`;
+}
+bind.all=function(){
+  document.querySelectorAll("#view button[data-id]").forEach(b=>b.addEventListener("click",()=>{UI.me={role:"office",building:UI.me.building};UI.sel=b.dataset.id;UI.filterSt="all";UI.filterLv="all";location.hash="todo";}));
+};
+
+/* ---------- boot ---------- */
+seed();
+render(true);
+})();
+
+</script>
+</body>
+</html>
